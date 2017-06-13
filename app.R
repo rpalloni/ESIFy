@@ -4,7 +4,7 @@ library(ggplot2)
 library(stringr)
 
 #########################################################
-################## Load Data from API ###################
+################## Fetch Data from API ###################
 #########################################################
 
 urlPlanned <- "https://cohesiondata.ec.europa.eu/resource/rde7-u3r9.json?$order=ms&$limit=10000"
