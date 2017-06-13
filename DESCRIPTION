@@ -1,0 +1,6 @@
+Title: Visualize Cohesion Policy OpenData
+Description: This folder contain the code to develop the web interface
+to visualize cohesion data as available at the Open Data Portal for the
+European Structural and Investment Funds https://cohesiondata.ec.europa.eu/
+Author: Roberto Palloni
+Web: https://cohesion-data-visualization.shinyapps.io/ms-op/
