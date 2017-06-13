@@ -1,9 +1,4 @@
-
-# Tutorial: http://shiny.rstudio.com/tutorial/
-# Case study: https://www.rstudio.com/products/shiny/shiny-user-showcase/
-
 library(shiny)
-library(RSocrata)
 library(dplyr)
 library(ggplot2)
 library(stringr)
@@ -12,31 +7,52 @@ library(stringr)
 ################## Load Data from API ###################
 #########################################################
 
-urlPlanned <- "https://cohesiondata.ec.europa.eu/resource/rde7-u3r9.json"
-dfP <- read.socrata(urlPlanned)
+urlPlanned <- "https://cohesiondata.ec.europa.eu/resource/rde7-u3r9.json?$order=ms&$limit=10000"
+jsonPlanned <- paste(readLines(urlPlanned), collapse="")
+
+
+dfP <- data.frame(jsonPlanned %>% 
+                    gather_array %>% 
+                    spread_values(
+                      ms = jstring("ms"),
+                      cci = jstring("cci"),
+                      title = jstring("title"),
+                      fund = jstring("fund"),
+                      PriorityAxis = jstring("priority"),
+                      ThematicObjectiveCode = jstring("to"),
+                      ThematicObjectiveName =jstring("to_long"),
+                      category_of_region = jstring("category_of_region"),
+                      cofinancing = jnumber("eu_co_financing"),
+                      total_amount = jnumber("total_amount")))
 
 dfP$ms <- as.factor(dfP$ms)
 dfP$fund <- as.factor(dfP$fund)
 dfP$title <- as.factor(dfP$title)
 dfP$to <- as.factor(dfP$to)
-dfP$total_amount <- as.numeric(dfP$total_amount)
 
 
-urlImplem <- "https://cohesiondata.ec.europa.eu/resource/f6wa-fhmb.json"
-dfI <- read.socrata(urlImplem)
+urlImplem <- "https://cohesiondata.ec.europa.eu/resource/f6wa-fhmb.json?$order=ms&$limit=50000"
+jsonImplem<- paste(readLines(urlImplem), collapse="")
+
+dfI <- data.frame(jsonImplem %>% 
+                    gather_array %>% 
+                    spread_values(
+                      ms = jstring("ms"),
+                      cci = jstring("cci"),
+                      title = jstring("title"),
+                      fund = jstring("fund"),
+                      PriorityAxis = jstring("priority"),
+                      ThematicObjectiveCode = jstring("to"),
+                      ThematicObjectiveName =jstring("to_long"),
+                      category_of_region = jstring("category_of_region"),
+                      cofinancing = jnumber("eu_co_financing"),
+                      total_eligible_cost= jnumber("total_eligible_cost"),
+                      total_eligible_expenditure=jnumber("total_eligible_expenditure")))
 
 dfI$ms <- as.factor(dfI$ms)
 dfI$fund <- as.factor(dfI$fund)
 dfI$title <- as.factor(dfI$title)
 dfI$to <- as.factor(dfI$to)
-dfI$total_eligible_cost <- as.numeric(dfI$total_eligible_cost)
-dfI$total_eligible_expenditure <- as.numeric(dfI$total_eligible_expenditure)
-
-
-# Shiny Template
-# ui <- fluidPage("Hello World")
-# server <- function(input, output) {}
-# shinyApp(ui = ui, server = server)
 
 app <- shinyApp(
 
