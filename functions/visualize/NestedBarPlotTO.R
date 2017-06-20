@@ -115,15 +115,9 @@ ggplot() +
   ylab("Rate of project selection and expenditure declared (%)") +
   theme_classic() +
   scale_y_continuous(expand = c(0, 0)) +
-  theme(legend.position="bottom",
-        legend.text=element_text(size=12),
-        axis.text.x = element_text(angle = 60, hjust = 1, size = 8),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
+  theme(axis.text.x = element_text(hjust = 1, size = 8),
         panel.border = element_blank(),
-        plot.title = element_text(face="bold"))
-
-
-
+        plot.title = element_text(face="bold"),
+        plot.margin = unit(c(0,0.5,2,0.5), "cm"))
 
 })

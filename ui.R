@@ -12,6 +12,8 @@ source('functions/fetch/FetchData.R', local = FALSE)
 # https://shiny.rstudio.com/articles/layout-guide.html
 
 shinyUI(fluidPage(
+  
+  includeCSS("www/style.css"),
 
   headerPanel('Visualize Cohesion Policy OpenData'),
   
@@ -24,21 +26,22 @@ shinyUI(fluidPage(
              column(4,
                   fluidRow(
                     column(4,
-                      sidebarPanel(style='width: 400px; height: 200px',
+      
+                      sidebarPanel(class = "sidebar",
                         selectInput('ms', 'Member State', unique(dfP$ms)),
                         selectInput('title', 'Operational Programme', unique(dfP$title))
                         )
                       )
                     ),
-                  fixedRow(
+                  fluidRow(
                     column(4,
-                      tags$div(class = "image", style="text-align: center;",
+                      tags$div(class = "image",
                       img(src='legend.png', height = '50px', width = '200px'))
                       )
                     )
                   ),
               column(8,
-                     mainPanel(style='width: 1200px; height: 600px',
+                     mainPanel(class = "plot",
                      plotOutput('pbarMS'),
                      tags$hr(),
                      plotOutput('pbarOP'),
@@ -49,7 +52,7 @@ shinyUI(fluidPage(
                    )
               ),
   
-    tags$div(
+    tags$div(class = "footer",
           tags$p("Developed by:", tags$a(href = "https://www.linkedin.com/in/roberto-palloni-6b224031/", "Roberto Palloni")),
           tags$p("GitHub:", tags$a(href = "https://github.com/rpalloni/CohesionDataVisualization", "rpalloni")))
   )
