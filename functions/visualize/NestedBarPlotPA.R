@@ -1,16 +1,16 @@
 output$pbarOP <- renderPlot({
   
-  setCCI <- input$title
+  setCCI <- input$title # Nordrhein-Westfalen - ERDF
   setMS <- input$ms
   
 
 OPP <- dfP %>%
   filter(title==setCCI & fund=="ERDF") %>%
   group_by(priority) %>%
-  summarise(sum(total_amount))
+  summarise(sum(total_amount, na.rm=T))
 
 OPI <- dfI %>%
-  filter(title==setCCI & fund=="ERDF") %>%
+  filter(title==setCCI & fund=="ERDF" & year==max(as.numeric(dfI$year))) %>%
   group_by(priority) %>%
   summarise(sum(total_eligible_cost, na.rm=T), 
             sum(total_eligible_expenditure, na.rm=T))
@@ -20,16 +20,16 @@ dt <- data.frame(OPname,OPP,OPI[-1])
 colnames(dt) <- c("OPname","PAcode", "PlannedPAx", "SelectionPAx", "ExpenditurePAx")
 
 pOP <- dfP %>% filter(title==setCCI & fund=="ERDF") %>% summarise(sum(total_amount))
-sOP <- dfI %>% filter(title==setCCI & fund=="ERDF") %>% summarise(sum(total_eligible_cost, na.rm=T))
-eOP <- dfI %>% filter(title==setCCI & fund=="ERDF") %>% summarise(sum(total_eligible_expenditure, na.rm=T))
+sOP <- dfI %>% filter(title==setCCI & fund=="ERDF" & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_cost, na.rm=T))
+eOP <- dfI %>% filter(title==setCCI & fund=="ERDF" & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_expenditure, na.rm=T))
 
 pMS <- dfP %>% filter(ms==setMS & fund=="ERDF") %>% summarise(sum(total_amount))
-sMS <- dfI %>% filter(ms==setMS & fund=="ERDF") %>% summarise(sum(total_eligible_cost, na.rm=T))
-eMS <- dfI %>% filter(ms==setMS & fund=="ERDF") %>% summarise(sum(total_eligible_expenditure, na.rm=T))
+sMS <- dfI %>% filter(ms==setMS & fund=="ERDF" & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_cost, na.rm=T))
+eMS <- dfI %>% filter(ms==setMS & fund=="ERDF" & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_expenditure, na.rm=T))
 
 pEU <- dfP %>% filter(fund=="ERDF") %>% summarise(sum(total_amount))
-sEU <- dfI %>% filter(fund=="ERDF") %>% summarise(sum(total_eligible_cost, na.rm=T))
-eEU <- dfI %>% filter(fund=="ERDF") %>% summarise(sum(total_eligible_expenditure, na.rm=T))
+sEU <- dfI %>% filter(fund=="ERDF" & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_cost, na.rm=T))
+eEU <- dfI %>% filter(fund=="ERDF" & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_expenditure, na.rm=T))
 
 # merge datasets
 dt <- rbind(dt, data.frame("OPname"="OP", "PAcode"="OP","PlannedPAx"= as.numeric(pOP),
@@ -70,7 +70,7 @@ ggplot() +
            position = position_dodge(width=0.9), stat="identity", width=0.4) +
   geom_text(data=dt, aes(label=paste0(round(ratio_g*100,1),"%"),
                          y=ratio_g*100+(ratio_g*100)*0.03, x=PAcode), size=3) +
-  ggtitle("Rate of project selection and expenditure declared by OP Priority Axis (% of planned financing)")+
+  ggtitle(paste("Rate of project selection and expenditure declared by OP Priority Axis (% of planned financing,",max(as.numeric(dfI$year)),")"))+
   xlab("EU, MS, OP and Priority Axes") + 
   ylab("Rate of project selection and expenditure declared (%)") +
   theme_classic() +

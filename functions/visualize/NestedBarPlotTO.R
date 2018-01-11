@@ -4,13 +4,15 @@ output$pbarTO <- renderPlot({
   setCCI <- input$title
   setMS <- input$ms
   
-
+  # Nordrhein-Westfalen - ERDF
 
 OPI <- dfI %>%
-  filter(title==setCCI & fund=="ERDF") %>%
+  filter(title==setCCI & fund=="ERDF" & year==max(as.numeric(dfI$year))) %>%
   group_by(to) %>%
   summarise(sum(total_eligible_cost, na.rm=T), 
             sum(total_eligible_expenditure, na.rm=T))
+
+
 
 OPI <- OPI[OPI$to != 'MULTI',]
 
@@ -19,6 +21,9 @@ OPP <- dfP %>%
   filter(title==setCCI & fund=="ERDF") %>%
   group_by(to) %>%
   summarise(sum(total_amount))
+
+
+
 
 OPP$toM <- rep(0, nrow(OPP))
 OPP$to <- as.character(OPP$to)
@@ -40,7 +45,7 @@ OPP <- OPP[OPP$toM != 'MULTI',]
 # MS
 
 MSI <- dfI %>%
-  filter(ms==setMS & fund=="ERDF") %>%
+  filter(ms==setMS & fund=="ERDF" & year==max(as.numeric(dfI$year))) %>%
   group_by(to) %>%
   summarise(sum(total_eligible_cost, na.rm=T), 
             sum(total_eligible_expenditure, na.rm=T))
@@ -59,7 +64,7 @@ MSP <- MSP[MSP$to %in% OPP$toM,]
 # EU
 
 EUI <- dfI %>%
-  filter(fund=="ERDF") %>%
+  filter(fund=="ERDF" & year==max(as.numeric(dfI$year))) %>%
   group_by(to) %>%
   summarise(sum(total_eligible_cost, na.rm=T), 
             sum(total_eligible_expenditure, na.rm=T))
@@ -115,7 +120,7 @@ ggplot() +
   ylab("Rate of project selection and expenditure declared (%)") +
   theme_classic() +
   scale_y_continuous(expand = c(0, 0)) +
-  theme(axis.text.x = element_text(hjust = 1, size = 8),
+  theme(axis.text.x = element_text(hjust = 1, size = 12),
         panel.border = element_blank(),
         plot.title = element_text(face="bold"),
         plot.margin = unit(c(0,0.5,2,0.5), "cm"))

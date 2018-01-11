@@ -5,13 +5,14 @@ output$pbarMS <- renderPlot({
 MSP <- dfP %>%
   filter(ms==setMS & fund=="ERDF") %>%
   group_by(title) %>%
-  summarise(sum(total_amount))
+  summarise(sum(total_amount, na.rm=T))
 
 MSI <- dfI %>%
-  filter(ms==setMS & fund=="ERDF") %>%
+  filter(ms==setMS & fund=="ERDF" & year==max(as.numeric(dfI$year))) %>%
   group_by(title) %>%
   summarise(sum(total_eligible_cost, na.rm=T), 
             sum(total_eligible_expenditure, na.rm=T))
+
 
 dt <- data.frame(MSP,MSI[-1])
 colnames(dt) <- c("Region", "PlannedOP", "SelectionOP", "ExpenditureOP")
@@ -20,12 +21,13 @@ colnames(dt) <- c("Region", "PlannedOP", "SelectionOP", "ExpenditureOP")
 ## fare stesse procedure per valori MS e EU
 
 pMS <- dfP %>% filter(ms==setMS & fund=="ERDF") %>% summarise(sum(total_amount))
-sMS <- dfI %>% filter(ms==setMS & fund=="ERDF") %>% summarise(sum(total_eligible_cost, na.rm=T))
-eMS <- dfI %>% filter(ms==setMS & fund=="ERDF") %>% summarise(sum(total_eligible_expenditure, na.rm=T))
+sMS <- dfI %>% filter(ms==setMS & fund=="ERDF" & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_cost, na.rm=T))
+eMS <- dfI %>% filter(ms==setMS & fund=="ERDF" & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_expenditure, na.rm=T))
 
 pEU <- dfP %>% filter(fund=="ERDF") %>% summarise(sum(total_amount))
-sEU <- dfI %>% filter(fund=="ERDF") %>% summarise(sum(total_eligible_cost, na.rm=T))
-eEU <- dfI %>% filter(fund=="ERDF") %>% summarise(sum(total_eligible_expenditure, na.rm=T))
+sEU <- dfI %>% filter(fund=="ERDF" & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_cost, na.rm=T))
+eEU <- dfI %>% filter(fund=="ERDF" & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_expenditure, na.rm=T))
+
 
 dt <- rbind(dt, data.frame("Region"=setMS, "PlannedOP"= as.numeric(pMS),
                            "SelectionOP"= as.numeric(sMS), "ExpenditureOP"=as.numeric(eMS)))

@@ -3,10 +3,12 @@ output$pbarTS <- renderPlot({
   setCCI <- input$title
   setMS <- input$ms
   
+  # Nordrhein-Westfalen - ERDF
+  
 OPP <- dfP %>%
   filter(title==setCCI & fund=="ERDF") %>%
   group_by(priority) %>%
-  summarise(sum(total_amount))
+  summarise(sum(total_amount, na.rm=T))
 
 OPI <- dfI %>%
   filter(title==setCCI & fund=="ERDF") %>%
@@ -24,10 +26,14 @@ dtPA$ratio_f <- dtPA$SelectionPAx/dtPA$PlannedPAx
 dtPA$ratio_g <- dtPA$ExpenditurePAx/dtPA$PlannedPAx
 
 dtPA$ColSel <- ifelse(dtPA$year == "2015", "#88e188",
-                    ifelse(dtPA$year == "2016", "#6aaf6a", "#B4EEB4"))
+                    ifelse(dtPA$year == "2016", "#6aaf6a",
+                           ifelse(dtPA$year == "2017", "#acbf5a",
+                                  ifelse(dtPA$year == "2018", "#abcf9a","#B4EEB4"))))
 
 dtPA$ColExp <- ifelse(dtPA$year == "2015", "#FF7878",
-                    ifelse(dtPA$year == "2016", "#EA4C44", "#FF9999"))
+                    ifelse(dtPA$year == "2016", "#EA4C44",
+                           ifelse(dtPA$year == "2017", "#ea4380",
+                                  ifelse(dtPA$year == "2018", "#eb6680","#FF9999"))))
 
 # OP
 pOP <- dfP %>% filter(title==setCCI & fund=="ERDF") %>% summarise(sum(total_amount))
@@ -43,24 +49,28 @@ dtOP$ratio_f <- dtOP$SelectionPAx/dtOP$PlannedPAx
 dtOP$ratio_g <- dtOP$ExpenditurePAx/dtOP$PlannedPAx
 
 dtOP$ColSel <- ifelse(dtOP$year == "2015", "#88e188",
-                    ifelse(dtOP$year == "2016", "#6aaf6a", "#B4EEB4"))
+                    ifelse(dtOP$year == "2016", "#6aaf6a",
+                           ifelse(dtOP$year == "2017", "#acbf5a",
+                                  ifelse(dtOP$year == "2018", "#abcf9a","#B4EEB4"))))
 
 dtOP$ColExp <- ifelse(dtOP$year == "2015", "#FF7878",
-                    ifelse(dtOP$year == "2016", "#EA4C44", "#FF9999"))
+                    ifelse(dtOP$year == "2016", "#EA4C44",
+                           ifelse(dtOP$year == "2017", "#ea4380",
+                                  ifelse(dtOP$year == "2018", "#eb6680","#FF9999"))))
 
 
 ## order of bars
 dtPA <- dtPA[order(dtPA$PAcode, -rank(dtPA$year), decreasing = T), ]
 dtPA$index <- seq(1:nrow(dtPA))
 
-year_order <- factor(dtPA$year, levels = c('2016','2015','2014'), ordered=T)
+year_order <- factor(dtPA$year, levels = c('2018','2017','2016','2015','2014'), ordered=T)
 
 
 ## plot function
 
-year_label <- seq(0.7,length.out=nrow(dtPA), by=0.3)
+year_label <- seq(0.7,length.out=nrow(dtPA), by=0.2)
 for (i in 1:length(year_label)){
-  year_label[i+3] <- year_label[i] + 1
+  year_label[i+4] <- year_label[i] + 1
 }
 yl <- year_label[1:nrow(dtPA)]
 
@@ -80,6 +90,7 @@ gPA <- ggplot() +
              expand = F) +
   annotate(geom = "text", x = yl , y = -2, label = rev(dtPA$year), size = 3) +
   theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm"),
+        axis.title.y = element_text(face="bold"),
         axis.line.y =  element_blank())
 
 
@@ -94,6 +105,7 @@ gOP <- ggplot() +
   ylab("Rate of project selection and expenditure declared (%)") +
   theme_classic() +
   theme(plot.margin = unit(c(0,0.5,0.5,0.5), "cm"),
+        axis.title.x = element_text(face="bold"),
         axis.line.y =  element_blank())
 
 
