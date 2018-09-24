@@ -1,0 +1,48 @@
+
+# istruzioni per pushare il codice sul server
+
+library(rsconnect)
+
+# cohesion-data-visualization
+# setAccountInfo(name='cohesion-data-visualization',
+#               token='694861E1AE5AF2EB54C61DD74AD99274',
+#               secret='gbIhLpYpKhegjTosUYrYJegW9Xbl0LPvbVDdeP7e')
+
+# CohesionView
+setAccountInfo(name='eu-data',
+               token='3572BA8BA463FB02283BB185BF9E33B1',
+               secret='/rKOaUgMG7KDhO0iTvoD8qiYQ2wQ9SRSEtevXxil')
+
+
+# deployApp('C:/Users/utente/Dropbox (t33)/Tesi/OpenDataApp/R/MS-OP')
+deployApp('C:/Users/utente/Dropbox (t33)/R/Shiny/esify', account = "eu-data")
+
+
+# email: r.palloni@t33.it
+# password: RobPalShiny
+
+# non inserire l'istruzione runApp(app) usata in locale per vedere l'output
+
+# per aggiornare la app in produzione modificare direttamente il codice e 
+# girare nuovamente le istruzioni riportate sopra
+
+
+# il dominio dell'applicazione si compone attraverso la cartella rsconnect che
+# si genera automaticamente nella stessa cartella del file app.R ed all'interno della
+# quale è contenuto il dominio shinyapps.io, il dominio di secondo livello 
+# name='cohesion-data-visualization' ed in cui si genera il file .dcf (Debian Control File)
+# con il riferimento alla cartella che contiene la app (e che sarà l'ultimo livello del dominio)
+
+# per cambiare dominio:
+# 1 - eliminare il file rsconnect
+# 2 - archiviare ed eliminare la app nel server (da profilo shiny)
+# 3 - cambiare il nome della cartella locale della app
+# 4 - ripushare con deployApp
+
+# per creare una nuova app:
+# 1 - richiedere un nuovo token e secret in Account/Tokens in www.shinyapps.io/admin/
+# 2 - cambiare la cartella in cui risiede l'app -> deve avere un nome di almeno 4 lettere
+# 3 - nella cartella viene creato il file rsconnect automaticamente per cui rimuovere se già presente
+
+# per cambiare il name (visibile nel dominio)
+# Account/Settings/Rename Account es. rpalloni
