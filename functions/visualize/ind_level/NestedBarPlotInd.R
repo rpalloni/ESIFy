@@ -113,6 +113,8 @@ output$pbarEUind <- renderPlot({
                         labels=c("MS project selection per indicator unit","MS expenditure declared per indicator unit",
                                  "EU project selection per indicator unit","EU expenditure declared per indicator unit")) +
       
+      ggtitle(paste("Indicator: ", dfR %>% filter(ind_code==setInd) %>% select(indicator_long_name) %>% slice(1))) +
+      
       labs(caption="*Ratios calculated only for MSs adopting the indicator and with value >0")+
       
       theme_classic() +
