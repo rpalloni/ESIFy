@@ -44,14 +44,7 @@ dfI$to <- ifelse(nchar(as.character(dfI$to))==1,paste0("0",as.character(dfI$to))
 dfI$to <- as.factor(dfI$to)
 
 
-#########################################################
-################## Load Meta from API ###################
-#########################################################
-
-urlMetadata <- "http://cohesiondata.ec.europa.eu/api/views/metadata/v1/f6wa-fhmb"
-update <- substr(readLines(urlMetadata)[8],22,31)
-
-######## Categorisation by year not available ########
+######## Indicators ########
 
 urlInd <- "https://cohesiondata.ec.europa.eu/resource/2q3n-nr7n.json"
 dfR <- read.socrata(urlInd)
@@ -70,4 +63,12 @@ dfR <- dfR %>% arrange(ms, fund, to, ind_code)
 dfR$to <- ifelse(nchar(as.character(dfR$to))==1,paste0("0",as.character(dfR$to)),as.character(dfR$to))
 dfR$to <- as.factor(dfR$to)
 
+#########################################################
+################## Load Meta from API ###################
+#########################################################
 
+urlMetadata <- "http://cohesiondata.ec.europa.eu/api/views/metadata/v1/f6wa-fhmb"
+update <- substr(readLines(urlMetadata)[8],22,31)
+
+urlMetadata <- "http://cohesiondata.ec.europa.eu/api/views/metadata/v1/2q3n-nr7n"
+update_ind <- substr(readLines(urlMetadata)[8],22,31)

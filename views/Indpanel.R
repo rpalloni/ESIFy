@@ -52,7 +52,7 @@ Indpanel <-
                   
                   tags$p("Source:", tags$a(href = "https://cohesiondata.ec.europa.eu/", "ESIF Open Data")),
                   
-                  tags$p("Update:", update)
+                  tags$p("Update:", update_ind)
                   
     ),
     ###############################################################
