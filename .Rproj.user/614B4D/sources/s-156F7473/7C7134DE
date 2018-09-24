@@ -7,13 +7,13 @@
     "folds" : "",
     "hash" : "0",
     "id" : "7C7134DE",
-    "lastKnownWriteTime" : 1537798499,
-    "last_content_update" : 1537798499785,
+    "lastKnownWriteTime" : 1537799218,
+    "last_content_update" : 1537799218712,
     "path" : "C:/Users/utente/Dropbox (t33)/R/Shiny/ESIFy/ui.R",
     "project_path" : "ui.R",
     "properties" : {
-        "cursorPosition" : "20,37",
-        "scrollLine" : "0"
+        "cursorPosition" : "32,128",
+        "scrollLine" : "7"
     },
     "relative_order" : 2,
     "source_on_save" : false,
