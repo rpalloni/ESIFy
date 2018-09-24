@@ -72,3 +72,5 @@ update <- substr(readLines(urlMetadata)[8],22,31)
 
 urlMetadata <- "http://cohesiondata.ec.europa.eu/api/views/metadata/v1/2q3n-nr7n"
 update_ind <- substr(readLines(urlMetadata)[8],22,31)
+
+###
