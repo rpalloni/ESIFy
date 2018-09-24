@@ -1,64 +1,40 @@
-#########################################################
-##################### User Interface ####################
-#########################################################
+# call the libraries and the data
+source('functions/fetch/FetchData.R', local = F)
 
-# https://shiny.rstudio.com/articles/modules.html
-# https://shiny.rstudio.com/articles/scoping.html
-
-
-source('functions/fetch/FetchData.R', local = FALSE)
+#################################################################################
+################################### front-end ###################################
+#################################################################################
+# EACH input and output element MUST have a unique ID
 
 
-# https://shiny.rstudio.com/articles/layout-guide.html
+source('views/info.R', local = F)
+source('views/EUpanel.R', local = F)
+source('views/MSpanel.R', local = F)
+source('views/OPpanel.R', local = F)
+source('views/Indpanel.R', local = F)
 
-shinyUI(fluidPage(
+
+shinyUI(
   
-  includeCSS("www/style.css"),
-
-  headerPanel('Visualize Cohesion Policy OpenData'),
-  
-  tags$div(class = "header",
-           tags$p("Data on financing and achievements under the ESI Funds 2014-2020 as available at ", tags$a(href = "https://cohesiondata.ec.europa.eu/", "Open Data Portal for the ESIF")),
-           tags$p("Data are available disaggregated by fund, programme, priority axis, thematic objective and category of regions."),
-           tags$p("Visualization of project selection and expenditure declared as percentage of planned financing as reported by the Managing Authorities of the programmes (ERDF only)."),
-           tags$hr()),
-
-             column(4,
-                  fluidRow(
-                    column(4,
-      
-                      sidebarPanel(class = "sidebar",
-                        selectInput('ms', 'Member State', unique(dfP$ms)),
-                        selectInput('title', 'Operational Programme', unique(dfP$title))
-                        )
-                      )
-                    ),
-                  fluidRow(
-                    column(4,
-                      tags$div(class = "image",
-                      img(src='legend.png', height = '50px', width = '200px'))
-                      )
-                    )
-                  ),
-              column(8,
-                     mainPanel(class = "plot",
-                     plotOutput('pbarMS'),
-                     tags$hr(),
-                     plotOutput('pbarOP'),
-                     tags$hr(),
-                     plotOutput('pbarTS'), # time series
-                     tags$hr(),
-                     plotOutput('pbarTO')
-                   )
-              ),
-  
-    tags$div(class = "footer",
-          tags$p("Developed by:", tags$a(href = "https://www.linkedin.com/in/roberto-palloni-6b224031/", "Roberto Palloni")),
-          tags$p("GitHub:", tags$a(href = "https://github.com/rpalloni/CohesionDataVisualization", "rpalloni")))
-  )
+  navbarPage(
+        "ESIFy",
+        tabPanel(icon("home"), info),
+        tabPanel("EU level", EUpanel),
+        tabPanel("MS level", MSpanel),
+        tabPanel("OP level", OPpanel),
+        navbarMenu("More",
+                   tabPanel("Indicators",Indpanel),
+                   tabPanel("Financial Instruments")
+        ),
+        
+        includeCSS("www/style.css"),
+        
+        tags$div(class = "footer",
+                 tags$p("Developed by:", tags$a(href = "https://www.linkedin.com/in/roberto-palloni-6b224031/", "Roberto Palloni")),
+                 tags$p("GitHub:", tags$a(href = "https://github.com/rpalloni/CohesionDataVisualization", "rpalloni"))))
 )
 
 
-
-
+# Create a Shiny app object
+# shinyApp(ui = ui, server = server)
 
