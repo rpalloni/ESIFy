@@ -54,8 +54,9 @@ dfR$ms <- as.factor(dfR$ms)
 dfR$fund <- as.factor(dfR$fund)
 dfR$title <- as.factor(dfR$title)
 
-dfR$implemented_nominator <- as.numeric(dfR$implemented_nominator)
-dfR$implemented_denominator <- as.numeric(dfR$implemented_denominator)
+# dfR$implemented_nominator <- as.numeric(dfR$implemented_nominator)
+# dfR$implemented_denominator <- as.numeric(dfR$implemented_denominator)
+dfR$forecast_value <- as.numeric(dfR$forecast_value)
 
 dfR <- dfR %>% arrange(ms, fund, to, ind_code)
 

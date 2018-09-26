@@ -5,14 +5,16 @@ output$pbarEUind <- renderPlot({
   setTO <- input$ToInd
   
   
+  setYear <- dfR %>% filter(year==max(as.numeric(dfR$year))) %>% distinct(year) %>%as.character()
+  
   MSR <- dfR %>%
-    filter(fund==setFund & to==setTO & ind_code==setInd & year==max(as.numeric(dfR$year))) %>%
+    filter(fund==setFund & to==setTO & ind_code==setInd & year==setYear) %>%
     group_by(ms,to) %>%
     summarise(sum(#implemented_denominator, na.rm=T,
-      implemented_nominator, na.rm=T))
+      forecast_value, na.rm=T))
   
   MSI <- dfI %>%
-    filter(fund==setFund & to==setTO & year==max(as.numeric(dfI$year))) %>%
+    filter(fund==setFund & to==setTO & year==setYear) %>%
     group_by(ms,to) %>%
     summarise(sum(total_eligible_cost, na.rm=T), 
               sum(total_eligible_expenditure, na.rm=T))
@@ -26,15 +28,15 @@ output$pbarEUind <- renderPlot({
   ## fare stesse procedure per valori MS e EU
   
   rEU <- dfR %>% 
-    filter(fund==setFund & to==setTO & ind_code==setInd & year==max(as.numeric(dfR$year))) %>%
-    summarise(sum(implemented_nominator, na.rm=T))
+    filter(fund==setFund & to==setTO & ind_code==setInd & year==setYear) %>%
+    summarise(sum(forecast_value, na.rm=T))
   
   sEU <- dfI %>% 
-    filter(fund==setFund & to==setTO & year==max(as.numeric(dfI$year))) %>%
+    filter(fund==setFund & to==setTO & year==setYear) %>%
     summarise(sum(total_eligible_cost, na.rm=T))
   
   eEU <- dfI %>% 
-    filter(fund==setFund & to==setTO & year==max(as.numeric(dfI$year))) %>%
+    filter(fund==setFund & to==setTO & year==setYear) %>%
     summarise(sum(total_eligible_expenditure, na.rm=T))
   
   dt <- rbind(dt, data.frame("ms"="EU","to"= setTO, "Indicator"= as.numeric(rEU),
@@ -113,7 +115,7 @@ output$pbarEUind <- renderPlot({
                         labels=c("MS project selection per indicator unit","MS expenditure declared per indicator unit",
                                  "EU project selection per indicator unit","EU expenditure declared per indicator unit")) +
       
-      ggtitle(paste("Indicator: ", dfR %>% filter(ind_code==setInd) %>% select(indicator_long_name) %>% slice(1))) +
+      ggtitle(paste("Indicator: ", dfR %>% filter(ind_code==setInd) %>% select(indicator_long_name) %>% slice(1),", ",setYear)) +
       
       labs(caption="*Ratios calculated only for MSs adopting the indicator and with value >0")+
       
