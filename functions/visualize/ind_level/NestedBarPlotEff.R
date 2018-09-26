@@ -1,4 +1,4 @@
-output$pbarEUind <- renderPlot({
+output$pbarEUeff <- renderPlot({
   
   setFund <- input$fundInd
   setInd <- input$codeInd
@@ -6,12 +6,18 @@ output$pbarEUind <- renderPlot({
   
   
   setYear <- dfR %>% filter(year==max(as.numeric(dfR$year))) %>% distinct(year) %>%as.character()
+  measure <- dfR %>% filter(ind_code==setInd) %>% select(measurement_unit) %>% slice(1) %>% as.character()
+  ind_name <- dfR %>% filter(ind_code==setInd) %>% select(indicator_long_name) %>% slice(1) %>% as.character()
   
   MSR <- dfR %>%
     filter(fund==setFund & to==setTO & ind_code==setInd & year==setYear) %>%
     group_by(ms,to) %>%
     summarise(sum(target_value, na.rm=T),
               sum(forecast_value, na.rm=T))
+  
+  
+  
+  
   
   MSI <- dfI %>%
     filter(fund==setFund & to==setTO & year==setYear) %>%
@@ -45,9 +51,12 @@ output$pbarEUind <- renderPlot({
   
   dt <- rbind(dt, data.frame("ms"="EU","to"= setTO, "Indicator"= as.numeric(rEU),
                              "Target"= as.numeric(tEU), "SelectionOP"= as.numeric(sEU), "ExpenditureOP"=as.numeric(eEU)))
-
   
-
+  
+  # ratio possible
+   dt <- dt %>% filter(Indicator>0)
+  
+  
   if(nrow(dt)==0){
     
     ggplot() + geom_text(aes(x = 1, y = 1, label="No Data", size = 4)) + theme_void()
@@ -56,8 +65,8 @@ output$pbarEUind <- renderPlot({
     
     
     ## rates calculation and set of colours
-    dt$valueSelection <- round((dt$Target),1)
-    dt$valueExpenditure <- round((dt$Indicator),1)
+    dt$valueSelection <- round((dt$SelectionOP/1000000/dt$Indicator),1)
+    dt$valueExpenditure <- round((dt$ExpenditureOP/1000000/dt$Indicator),1)
     
     dt$level <- ifelse(dt$ms =="EU", "EU","MS")
     
@@ -113,13 +122,12 @@ output$pbarEUind <- renderPlot({
                         # breaks e labels gestiscono ordine ed etichette                  
                         breaks = c("#42beb8","#ed7d31",
                                    "#48686c", "#f2c400"),
-                        
-                        labels=c("MS indicator value","MS target value",
-                                 "EU indicator value","EU target value")) +
+                        labels=c("MS project selection per indicator unit","MS expenditure declared per indicator unit",
+                                  "EU project selection per indicator unit","EU expenditure declared per indicator unit")) +
       
-      ggtitle(paste0("Indicator: ", dfR %>% filter(ind_code==setInd) %>% select(indicator_long_name) %>% slice(1),", ",setYear)) +
+      ggtitle(paste0("Indicator: ", ind_name,"\nMeasurement unit: ",measure,"\nYear: ",setYear)) +
       
-      # labs(caption="*Ratios calculated only for MSs adopting the indicator and with value >0")+
+      labs(caption="*Ratios calculated only for MSs adopting the indicator and with value >0")+
       
       theme_classic() +
       

@@ -70,7 +70,8 @@ Indpanel <-
     # uiOutput
     mainPanel(
       tags$div(class = "plot",
-               tags$p("Project selection and expenditure efficiency (EUR million per indicator unit)"),
+               # tags$p("Project selection and expenditure efficiency (EUR million per indicator unit)"),
+               tags$p("Indicator value and target by MS"),
                withSpinner(plotOutput(outputId = "pbarEUind",  width = "auto")),
                tags$br()
       )
