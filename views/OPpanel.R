@@ -63,7 +63,7 @@ OPpanel <-
     mainPanel(
       tags$div(class = "plot",
         tags$p("Rate of project selection and expenditure declared by Operational Program Priority Axis (% of planned financing)"),
-        withSpinner(plotOutput(outputId = "pbarPA",  width = "auto")),
+        withSpinner(plotlyOutput(outputId = "pbarPA",  width = "auto")),
         tags$br()
         ),
       tags$div(class = "plot",
@@ -73,7 +73,7 @@ OPpanel <-
         ),
       tags$div(class = "plot",
         tags$p("Rate of project selection and expenditure declared by Thematic Objective (% of planned financing)"),
-        withSpinner(plotOutput(outputId = "pbarTO",  width = "auto")),
+        withSpinner(plotlyOutput(outputId = "pbarTO",  width = "auto")),
         tags$br()
         ),
       dataTableOutput(outputId = "tData",  width = "auto")

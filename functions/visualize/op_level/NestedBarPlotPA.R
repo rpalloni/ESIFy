@@ -1,8 +1,8 @@
-output$pbarPA <- renderPlot({
+output$pbarPA <- renderPlotly({
   
-        setMS <- input$msOPp
-        setFund <- input$fundOPp
-        setCCI <- input$titleOPp # Nordrhein-Westfalen - ERDF
+  setMS <- input$msOPp # 'DE'
+  setFund <- input$fundOPp # 'ERDF'
+  setCCI <- input$titleOPp # 'Nordrhein-Westfalen - ERDF'
             
             OPP <- dfP %>%
               filter(title==setCCI & fund==setFund) %>%
@@ -17,7 +17,7 @@ output$pbarPA <- renderPlot({
             
             OPname <- rep(setCCI, nrow(OPI))
             dt <- data.frame(OPname,OPP,OPI[-1])
-            colnames(dt) <- c("OPname","PAcode", "PlannedPAx", "SelectionPAx", "ExpenditurePAx")
+            colnames(dt) <- c("Geo","PAcode", "PlannedPAx", "SelectionPAx", "ExpenditurePAx")
             
             # planned, selection, expenditure
             pOP <- dfP %>% filter(title==setCCI & fund==setFund) %>% summarise(sum(total_amount))
@@ -33,26 +33,26 @@ output$pbarPA <- renderPlot({
             eEU <- dfI %>% filter(fund==setFund & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_expenditure, na.rm=T))
             
             # merge datasets
-            dt <- rbind(dt, data.frame("OPname"="OP", "PAcode"="OP","PlannedPAx"= as.numeric(pOP),
+            dt <- rbind(dt, data.frame("Geo"="OP", "PAcode"="OP","PlannedPAx"= as.numeric(pOP),
                                        "SelectionPAx"= as.numeric(sOP), "ExpenditurePAx"=as.numeric(eOP)))
-            dt <- rbind(dt, data.frame("OPname"=setMS, "PAcode"=setMS,"PlannedPAx"= as.numeric(pMS),
+            dt <- rbind(dt, data.frame("Geo"=setMS, "PAcode"=setMS,"PlannedPAx"= as.numeric(pMS),
                                        "SelectionPAx"= as.numeric(sMS), "ExpenditurePAx"=as.numeric(eMS)))
-            dt <- rbind(dt, data.frame("OPname"="EU", "PAcode"="EU","PlannedPAx"= as.numeric(pEU),
+            dt <- rbind(dt, data.frame("Geo"="EU", "PAcode"="EU","PlannedPAx"= as.numeric(pEU),
                                        "SelectionPAx"= as.numeric(sEU), "ExpenditurePAx"=as.numeric(eEU)))
             
             ## rates calculation and set of colours
             dt$valueSelection <- round((dt$SelectionPAx/dt$PlannedPAx)*100,1)
             dt$valueExpenditure <- round((dt$ExpenditurePAx/dt$PlannedPAx)*100,1)
             
-            dt$level <- ifelse(dt$OPname == "OP", "OP",
-                               ifelse(dt$OPname == setMS, "MS",
-                                      ifelse(dt$OPname =="EU", "EU","PA")))
+            dt$level <- ifelse(dt$Geo == "OP", "OP",
+                               ifelse(dt$Geo == setMS, "MS",
+                                      ifelse(dt$Geo =="EU", "EU","PA")))
             
-            dt$ColSel <- ifelse(dt$level == "MS", "#42beb8",
-                                ifelse(dt$level == "EU", "#48686c", "#b1dcc0"))
+            dt$ColSel <- ifelse(dt$level == "MS", "MS project selection",
+                                ifelse(dt$level == "EU", "EU project selection", "OP project selection"))
             
-            dt$ColExp <- ifelse(dt$level == "MS", "#ed7d31",
-                                ifelse(dt$level == "EU", "#f2c400", "#f04e52"))
+            dt$ColExp <- ifelse(dt$level == "MS", "MS expenditure declared",
+                                ifelse(dt$level == "EU", "EU expenditure declared", "OP expenditure declared"))
             
             ## order of bars
             dt$PAcode <- as.character(dt$PAcode)
@@ -62,17 +62,19 @@ output$pbarPA <- renderPlot({
             dt <- dt[order(dt$index, decreasing = T), ]
             
             ## plot function
-
+            ggplotly(
             ggplot() +
               
               # selection
               geom_bar(data = dt,
                        aes(x=reorder(PAcode, -index),
                            y=valueSelection, 
-                           fill = ColSel),
+                           fill = ColSel,
+                           label2 = Geo),
                        position = position_dodge(width=0.9), stat="identity", width=0.8) +
               geom_text(data = dt,
                         aes(label=paste0(valueSelection,"%"),
+                            label2 = Geo,
                             y=valueSelection,
                             x=PAcode),
                         size=3,
@@ -84,10 +86,12 @@ output$pbarPA <- renderPlot({
               geom_bar(data = dt,
                        aes(x=reorder(PAcode, -index),
                            y=valueExpenditure, 
-                           fill = ColExp),
+                           fill = ColExp,
+                           label2 = Geo),
                        position = position_dodge(width=0.9), stat="identity", width=0.4) +
               geom_text(data = dt,
                         aes(label=paste0(valueExpenditure,"%"),
+                            label2 = Geo,
                             y=valueExpenditure,
                             x=PAcode),
                         size=3,
@@ -97,20 +101,13 @@ output$pbarPA <- renderPlot({
               
               # legend, footnote
               scale_fill_manual(name = "",
-                                values=c("#b1dcc0"="#b1dcc0", # OP sel
-                                         "#f04e52"="#f04e52", # OP exp
-                                         "#42beb8"="#42beb8", # MS sel
-                                         "#ed7d31"="#ed7d31", # MS exp
-                                         "#48686c"="#48686c", # EU sel
-                                         "#f2c400"="#f2c400"),# EU exp
-                                # breaks e labels gestiscono ordine ed etichette                  
-                                breaks = c("#48686c","#f2c400",
-                                           "#42beb8","#ed7d31",
-                                           "#b1dcc0", "#f04e52"),
-                                labels=c("EU rate of project selection","EU rate of expenditure declared",
-                                         "MS rate of project selection","MS rate of expenditure declared",
-                                         "OP rate of project selection","OP rate of expenditure declared")) +
-
+                                values=c("OP project selection"="#b1dcc0", # OP sel
+                                         "OP expenditure declared"="#f04e52", # OP exp
+                                         "MS project selection"="#42beb8", # MS sel
+                                         "MS expenditure declared"="#ed7d31", # MS exp
+                                         "EU project selection"="#48686c", # EU sel
+                                         "EU expenditure declared"="#f2c400")# EU exp
+                                ) +
               
               theme_classic() +
               
@@ -121,12 +118,7 @@ output$pbarPA <- renderPlot({
               
               coord_flip(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
               
-              theme(legend.position = "bottom",
-                    legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left
-                    legend.box.background = element_rect(colour = "white"),
-                    legend.direction = "horizontal",
-                    legend.title = element_blank(),
-                    legend.text=element_text(size=10),
+              theme(
                     axis.title.x=element_blank(),
                     axis.title.y=element_blank(),
                     axis.text.x = element_text(hjust = 0.5, size = 10),
@@ -135,7 +127,17 @@ output$pbarPA <- renderPlot({
                     panel.grid.major.x = element_line(size = 0.5, colour = 'lightgrey'),
                     panel.grid.major.y = element_blank(),
                     plot.title = element_text(face="bold"),
-                    plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm"))
+                    plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")),
             
+            tooltip=c("label2", "y")
+            ) %>%
+              layout(
+                showlegend = T,
+                legend = list(
+                  orientation = "v", 
+                  x = 1, 
+                  y = 0.2
+                )
+              )
 
 })

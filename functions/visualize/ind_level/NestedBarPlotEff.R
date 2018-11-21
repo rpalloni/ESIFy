@@ -14,10 +14,7 @@ output$pbarEUeff <- renderPlot({
     group_by(ms,to) %>%
     summarise(sum(target_value, na.rm=T),
               sum(forecast_value, na.rm=T))
-  
-  
-  
-  
+
   
   MSI <- dfI %>%
     filter(fund==setFund & to==setTO & year==setYear) %>%
@@ -133,15 +130,15 @@ output$pbarEUeff <- renderPlot({
       
       scale_x_discrete(labels = function(x) str_wrap(x, width = 15)) +
       scale_y_continuous(expand = c(0, 0),
-                         breaks = seq(0, max(dt$valueSelection, na.rm=T), by=5000),
-                         labels =  paste0(seq(0, max(dt$valueSelection, na.rm=T),by=5000))) +
+                         breaks = seq(0, max(dt$valueSelection, na.rm=T), by=10),
+                         labels =  paste0(seq(0, max(dt$valueSelection, na.rm=T),by=10))) +
       
       coord_cartesian(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
       
       theme(legend.position = "bottom",
             legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left
             legend.box.background = element_rect(colour = "white"),
-            legend.direction = "horizontal",
+            legend.direction = "vertical",
             legend.title = element_blank(),
             legend.text=element_text(size=10),
             axis.title.x=element_blank(),

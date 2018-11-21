@@ -70,21 +70,20 @@ Indpanel <-
     # uiOutput
     mainPanel(
       tags$div(class = "plot",
-               # tags$p("Project selection and expenditure efficiency (EUR million per indicator unit)"),
                tags$p("Indicator value and target by MS"),
                withSpinner(plotOutput(outputId = "pbarEUind",  width = "auto")),
                tags$br()
+      ),
+      tags$div(class = "plot",
+               tags$p("Rate of achievement by MS (% of target)"),
+               withSpinner(plotOutput(outputId = "pbarEUindRate",  width = "auto")),
+               tags$br()
+      ),
+      tags$div(class = "plot",
+               tags$p("Project selection and expenditure efficiency (EUR million per indicator unit)"),
+               withSpinner(plotOutput(outputId = "pbarEUeff",  width = "auto")),
+               tags$br()
       )
-      # tags$div(class = "plot",
-      #          tags$p("Rate of project selection and expenditure declared over time: OP (left) and PA (right) details (% of planned financing)"),
-      #          withSpinner(plotOutput(outputId = "pbarTS",  width = "auto")),
-      #          tags$br()
-      # ),
-      # tags$div(class = "plot",
-      #          tags$p("Rate of project selection and expenditure declared by Thematic Objective (% of planned financing)"),
-      #          withSpinner(plotOutput(outputId = "pbarTO",  width = "auto")),
-      #          tags$br()
-      # ),
       # dataTableOutput(outputId = "tData",  width = "auto")
     )
   )

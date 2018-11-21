@@ -1,4 +1,4 @@
-output$pbarEUind <- renderPlot({
+output$pbarEUindRate <- renderPlot({
   
   setFund <- input$fundInd
   setInd <- input$codeInd
@@ -47,9 +47,9 @@ output$pbarEUind <- renderPlot({
   
   dt <- rbind(dt, data.frame("ms"="EU","to"= setTO, "Indicator"= as.numeric(rEU),
                              "Target"= as.numeric(tEU), "SelectionOP"= as.numeric(sEU), "ExpenditureOP"=as.numeric(eEU)))
-
   
-
+  
+  
   if(nrow(dt)==0){
     
     ggplot() + geom_text(aes(x = 1, y = 1, label="No Data", size = 4)) + theme_void()
@@ -58,18 +58,20 @@ output$pbarEUind <- renderPlot({
     
     
     ## rates calculation and set of colours
-    dt$valueSelection <- round((dt$Target),1)
-    dt$valueExpenditure <- round((dt$Indicator),1)
+    #dt$valueSelection <- round((dt$Target),1)
+    #dt$valueExpenditure <- round((dt$Indicator),1)
+    
+    dt$rate <- round((dt$Indicator/dt$Target)*100,1)
     
     dt$level <- ifelse(dt$ms =="EU", "EU","MS")
     
     dt$ColSel <- ifelse(dt$level == "MS", "#42beb8", "#48686c")
     
-    dt$ColExp <- ifelse(dt$level == "MS", "#ed7d31", "#f2c400")
+    # dt$ColExp <- ifelse(dt$level == "MS", "#ed7d31", "#f2c400")
     
     
     # riordinare i valori per avere il matching corretto
-    dt <- dt[order(-dt$valueSelection),]
+    dt <- dt[order(-dt$rate),]
     dt$index <- seq(1:nrow(dt))
     
     ## plot function
@@ -79,45 +81,45 @@ output$pbarEUind <- renderPlot({
       # selection
       geom_bar(data = dt,
                aes(x=reorder(ms, index),
-                   y=valueSelection, 
+                   y=rate, 
                    fill = ColSel),
                position = position_dodge(width=0.9), stat="identity", width=0.8) +
       geom_text(data = dt,
-                aes(label=paste0(valueSelection),
-                    y=valueSelection,
+                aes(label=paste0(rate, "%"),
+                    y=rate,
                     x=ms),
                 size=3,
                 hjust = 0.5,
                 vjust = -0.5,
                 position = position_dodge(width = 1)) +
       
-      # expenditure
-      geom_bar(data = dt,
-               aes(x=reorder(ms, index),
-                   y=valueExpenditure, 
-                   fill = ColExp),
-               position = position_dodge(width=0.9), stat="identity", width=0.4) +
-      geom_text(data = dt,
-                aes(label=paste0(valueExpenditure),
-                    y=valueExpenditure,
-                    x=ms),
-                size=3,
-                hjust = 0.5,
-                vjust = -0.5,
-                position = position_dodge(width = 1)) +
+      # # expenditure
+      # geom_bar(data = dt,
+      #          aes(x=reorder(ms, index),
+      #              y=valueExpenditure, 
+      #              fill = ColExp),
+      #          position = position_dodge(width=0.9), stat="identity", width=0.4) +
+      # geom_text(data = dt,
+      #           aes(label=paste0(valueExpenditure),
+      #               y=valueExpenditure,
+      #               x=ms),
+      #           size=3,
+      #           hjust = 0.5,
+      #           vjust = -0.5,
+      #           position = position_dodge(width = 1)) +
       
       # legend, footnote
       scale_fill_manual(name = "",
                         values=c("#42beb8"="#42beb8", # MS sel
-                                 "#ed7d31"="#ed7d31", # MS exp
-                                 "#48686c"="#48686c", # EU sel
-                                 "#f2c400"="#f2c400"),# EU exp
+                                 #"#ed7d31"="#ed7d31", # MS exp
+                                 "#48686c"="#48686c"), # EU sel
+                                 #"#f2c400"="#f2c400"),# EU exp
                         # breaks e labels gestiscono ordine ed etichette                  
-                        breaks = c("#42beb8","#ed7d31",
-                                   "#48686c", "#f2c400"),
+                        breaks = c("#42beb8",#"#ed7d31",
+                                   "#48686c"), #"#ed7d31"),
                         
-                        labels=c("MS indicator value","MS target value",
-                                 "EU indicator value","EU target value")) +
+                        labels=c(#"MS indicator value","MS target value",
+                                 "MS rate of achievement","EU rate of achievement")) +
       
       ggtitle(paste0("Indicator: ", ind_name,"\nMeasurement unit: ",measure,"\nYear: ",setYear)) +
       
@@ -127,10 +129,10 @@ output$pbarEUind <- renderPlot({
       
       scale_x_discrete(labels = function(x) str_wrap(x, width = 15)) +
       scale_y_continuous(expand = c(0, 0),
-                         breaks = seq(0, max(dt$valueSelection, na.rm=T), by=5000),
-                         labels =  paste0(seq(0, max(dt$valueSelection, na.rm=T),by=5000))) +
+                         breaks = seq(0, max(dt$rate, na.rm=T), by=10),
+                         labels =  paste0(seq(0, max(dt$rate, na.rm=T),by=10),"%")) +
       
-      coord_cartesian(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
+      coord_cartesian(ylim = c(0,max(dt$rate, na.rm=T)+max(dt$rate, na.rm=T)*0.1), expand = T) +
       
       theme(legend.position = "bottom",
             legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left

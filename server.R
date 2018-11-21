@@ -54,6 +54,8 @@ shinyServer(
     
     
     source('functions/visualize/ind_level/NestedBarPlotInd.R', local = T)
+    source('functions/visualize/ind_level/NestedBarPlotIndRate.R', local = T)
+    source('functions/visualize/ind_level/NestedBarPlotEff.R', local = T)
       
   }
 )

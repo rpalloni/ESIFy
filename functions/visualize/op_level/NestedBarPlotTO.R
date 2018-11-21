@@ -1,19 +1,15 @@
 
-output$pbarTO <- renderPlot({
+output$pbarTO <- renderPlotly({
   
-  setMS <- input$msOPp
-  setFund <- input$fundOPp
-  setCCI <- input$titleOPp # Nordrhein-Westfalen - ERDF
-  
-  # Nordrhein-Westfalen - ERDF
+  setMS <- input$msOPp # 'DE'
+  setFund <- input$fundOPp # 'ERDF'
+  setCCI <- input$titleOPp # 'Nordrhein-Westfalen - ERDF'
           
           OPI <- dfI %>%
             filter(title==setCCI & fund==setFund & year==max(as.numeric(dfI$year))) %>%
             group_by(to) %>%
             summarise(sum(total_eligible_cost, na.rm=T), 
                       sum(total_eligible_expenditure, na.rm=T))
-          
-          
           
           OPI <- OPI[OPI$to != 'MULTI',]
           
@@ -22,9 +18,6 @@ output$pbarTO <- renderPlot({
             filter(title==setCCI & fund==setFund) %>%
             group_by(to) %>%
             summarise(sum(total_amount))
-          
-          
-          
           
           OPP$toM <- rep(0, nrow(OPP))
           OPP$to <- as.character(OPP$to)
@@ -81,13 +74,12 @@ output$pbarTO <- renderPlot({
           EUP <- EUP[EUP$to %in% OPP$toM,]
           
           
-          
           dtOP <- data.frame(setCCI,OPP[-1],OPI)
-          colnames(dtOP) <- c("Name", "PlannedTO", "TOcode", "SelectionTO", "ExpenditureTO")
+          colnames(dtOP) <- c("Geo", "PlannedTO", "TOcode", "SelectionTO", "ExpenditureTO")
           dtMS <- data.frame(setMS,MSP[-1],MSI)
-          colnames(dtMS) <- c("Name", "PlannedTO", "TOcode", "SelectionTO", "ExpenditureTO")
+          colnames(dtMS) <- c("Geo", "PlannedTO", "TOcode", "SelectionTO", "ExpenditureTO")
           dtEU <- data.frame('EU',EUP[-1],EUI)
-          colnames(dtEU) <- c("Name", "PlannedTO", "TOcode", "SelectionTO", "ExpenditureTO")
+          colnames(dtEU) <- c("Geo", "PlannedTO", "TOcode", "SelectionTO", "ExpenditureTO")
           dt <- rbind(dtOP, dtMS, dtEU)
           
           
@@ -95,23 +87,25 @@ output$pbarTO <- renderPlot({
           dt$valueSelection <- round((dt$SelectionTO/dt$PlannedTO)*100,1)
           dt$valueExpenditure <- round((dt$ExpenditureTO/dt$PlannedTO)*100,1)
           
-          dt$level <- ifelse(dt$Name == "OP", "OP",
-                             ifelse(dt$Name == setMS, "MS",
-                                    ifelse(dt$Name =="EU", "EU","OP")))
+          dt$level <- ifelse(dt$Geo == "OP", "OP",
+                             ifelse(dt$Geo == setMS, "MS",
+                                    ifelse(dt$Geo =="EU", "EU","OP")))
           
-          dt$ColSel <- ifelse(dt$level == "MS", "#42beb8",
-                              ifelse(dt$level == "EU", "#48686c", "#b1dcc0"))
+          dt$ColSel <- ifelse(dt$level == "MS", "MS project selection",
+                              ifelse(dt$level == "EU", "EU project selection", "OP project selection"))
           
-          dt$ColExp <- ifelse(dt$level == "MS", "#ed7d31",
-                              ifelse(dt$level == "EU", "#f2c400", "#f04e52"))
+          dt$ColExp <- ifelse(dt$level == "MS", "MS expenditure declared",
+                              ifelse(dt$level == "EU", "EU expenditure declared", "OP expenditure declared"))
+
           
           ## order of bars
           dt <- dt[order(dt$TOcode, dt$level), ]
           dt$index <- seq(1:nrow(dt))
+
           
           ## plot function
           
-          
+          ggplotly(
           ggplot() +
             
             # selection
@@ -119,14 +113,16 @@ output$pbarTO <- renderPlot({
                      aes(x=reorder(TOcode, index),
                          y=valueSelection, 
                          fill = ColSel,
-                         group = Name),
+                         group = level,
+                         label2 = Geo),
                      position = position_dodge(width = 0.9),
                      stat="identity", width=0.8) +
             geom_text(data = dt,
                       aes(label=paste0(valueSelection,"%"),
+                          label2 = Geo,
                           y=valueSelection,
                           x=TOcode,
-                          group = Name),
+                          group = level),
                       size=3,
                       hjust = 0.5,
                       vjust = -0.2,
@@ -137,14 +133,16 @@ output$pbarTO <- renderPlot({
                      aes(x=reorder(TOcode, index),
                          y=valueExpenditure, 
                          fill = ColExp,
-                         group = Name),
+                         group = level,
+                         label2 = Geo),
                      position = position_dodge(width = 0.9),
                      stat="identity", width=0.4) +
             geom_text(data = dt,
                       aes(label=paste0(valueExpenditure,"%"),
+                          label2 = Geo,
                           y=valueExpenditure,
                           x=TOcode,
-                          group = Name),
+                          group = level),
                       size=3,
                       hjust = 0.5,
                       vjust = -0.2,
@@ -152,47 +150,42 @@ output$pbarTO <- renderPlot({
             
             # legend, footnote
             scale_fill_manual(name = "",
-                              values=c("#b1dcc0"="#b1dcc0", # OP sel
-                                       "#f04e52"="#f04e52", # OP exp
-                                       "#42beb8"="#42beb8", # MS sel
-                                       "#ed7d31"="#ed7d31", # MS exp
-                                       "#48686c"="#48686c", # EU sel
-                                       "#f2c400"="#f2c400"),# EU exp
-                              # breaks e labels gestiscono ordine ed etichette                  
-                              breaks = c("#48686c","#f2c400",
-                                         "#42beb8","#ed7d31",
-                                         "#b1dcc0", "#f04e52"),
-                              labels=c("EU rate of project selection","EU rate of expenditure declared",
-                                       "MS rate of project selection","MS rate of expenditure declared",
-                                       "OP rate of project selection","OP rate of expenditure declared")) +
-            
+                              values=c("OP project selection"="#b1dcc0", # OP sel
+                                       "OP expenditure declared"="#f04e52", # OP exp
+                                       "MS project selection"="#42beb8", # MS sel
+                                       "MS expenditure declared"="#ed7d31", # MS exp
+                                       "EU project selection"="#48686c", # EU sel
+                                       "EU expenditure declared"="#f2c400")# EU exp
+                              ) +
+
             
             theme_classic() +
             
-            #scale_x_discrete(labels = function(x) str_wrap(x, width = 35)) +
             scale_y_continuous(expand = c(0, 0),
                                breaks = seq(0, max(dt$valueSelection, na.rm=T), by=10),
                                labels =  paste0(seq(0, max(dt$valueSelection, na.rm=T),by=10),"%")) +
             
             coord_cartesian(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
             
-            theme(legend.position = "bottom",
-                  legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left
-                  legend.box.background = element_rect(colour = "white"),
-                  legend.direction = "horizontal",
-                  legend.title = element_blank(),
-                  legend.text=element_text(size=10),
+            theme(
                   axis.title.x=element_blank(),
                   axis.title.y=element_blank(),
                   axis.text.x = element_text(hjust = 0.5, size = 10),
                   axis.text.y = element_text(size = 10),
-                  #panel.border = element_rect(colour = "black", fill=NA, size=0.5),
                   panel.grid.major.x = element_blank(),
                   panel.grid.major.y = element_line(size = 0.5, colour = 'lightgrey'),
                   plot.title = element_text(face="bold"),
-                  plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm"))
+                  plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")),
           
-          
-          
+          tooltip=c("label2", "y")
+          ) %>%
+            layout(
+              showlegend = T,
+              legend = list(
+                orientation = "v", 
+                x = 1, 
+                y = 0.2
+                )
+              )
 
 })

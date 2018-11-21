@@ -1,6 +1,7 @@
 library(RSocrata)
 library(shiny)
 library(ggplot2)
+library(plotly) # ggplotly()
 library(gridExtra)
 library(stringr)
 library(scales)
