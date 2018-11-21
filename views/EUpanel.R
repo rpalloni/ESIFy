@@ -14,7 +14,7 @@ EUpanel <-
     ##################################################################
     absolutePanel(id = "menuEUp", fixed = TRUE, draggable = TRUE, class = "menu",
                   top = 60, right = 30, bottom = "auto", left = "auto",
-                  width = 330, height = "auto",
+                  width = 280, height = "auto",
                   
                   
                   # Select variable for color
@@ -61,15 +61,15 @@ EUpanel <-
    mainPanel(
      tags$div(class = "plot",
                tags$p("Rate of project selection and expenditure declared of EU Member States (% of planned financing)"),
-               withSpinner(plotOutput(outputId = "pbarEU",  width = "auto"))
+               withSpinner(plotlyOutput(outputId = "pbarEU",  width = "auto"))
      ),
      tags$div(class = "plot",
               tags$p("Rate of project selection and expenditure declared by TO (% of planned financing)"),
-              withSpinner(plotOutput(outputId = "pbarTOeu",  width = "auto"))
+              withSpinner(plotlyOutput(outputId = "pbarTOeu",  width = "auto"))
      ),
      tags$div(class = "plot",
               tags$p("Project selection and expenditure declared by TO (EUR billion)"),
-              withSpinner(plotOutput(outputId = "pbarTOeuro",  width = "auto"))
+              withSpinner(plotlyOutput(outputId = "pbarTOeuro",  width = "auto"))
      ),
      tags$div(tags$br()) # 
    )

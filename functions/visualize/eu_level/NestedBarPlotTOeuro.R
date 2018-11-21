@@ -1,5 +1,5 @@
 
-output$pbarTOeuro <- renderPlot({
+output$pbarTOeuro <- renderPlotly({
   
   setFund <- input$fundEUp
   
@@ -12,7 +12,7 @@ output$pbarTOeuro <- renderPlot({
               sum(total_eligible_expenditure, na.rm=T))
   
   dtEU <- data.frame('EU',EUI)
-  colnames(dtEU) <- c("Name", "TOcode","PlannedTO", "SelectionTO", "ExpenditureTO")
+  colnames(dtEU) <- c("Geo", "TOcode","PlannedTO", "SelectionTO", "ExpenditureTO")
   dt <- dtEU
   
   
@@ -21,9 +21,9 @@ output$pbarTOeuro <- renderPlot({
   dt$valueExpenditure <- round(dt$ExpenditureTO/1000000000,1)
   
   
-  dt$ColSel <- "#48686c"
+  dt$ColSel <- "EU project selection"
   
-  dt$ColExp <- "#f2c400"
+  dt$ColExp <- "EU expenditure declared"
   
   ## order of bars
   dt <- dt[order(dt$TOcode), ]
@@ -31,7 +31,7 @@ output$pbarTOeuro <- renderPlot({
   
   ## plot function
   
-  
+  ggplotly(
   ggplot() +
     
     # selection
@@ -39,14 +39,16 @@ output$pbarTOeuro <- renderPlot({
              aes(x=reorder(TOcode, index),
                  y=valueSelection, 
                  fill = ColSel,
-                 group = Name),
+                 group = Geo,
+                 label2 = Geo),
              position = position_dodge(width = 0.9),
              stat="identity", width=0.8) +
     geom_text(data = dt,
               aes(label=paste0(valueSelection),
+                  label2 = Geo,
                   y=valueSelection,
                   x=TOcode,
-                  group = Name),
+                  group = Geo),
               size=3,
               hjust = 0.5,
               vjust = -0.2,
@@ -57,14 +59,16 @@ output$pbarTOeuro <- renderPlot({
              aes(x=reorder(TOcode, index),
                  y=valueExpenditure, 
                  fill = ColExp,
-                 group = Name),
+                 group = Geo,
+                 label2 = Geo),
              position = position_dodge(width = 0.9),
              stat="identity", width=0.4) +
     geom_text(data = dt,
               aes(label=paste0(valueExpenditure),
+                  label2 = Geo,
                   y=valueExpenditure,
                   x=TOcode,
-                  group = Name),
+                  group = Geo),
               size=3,
               hjust = 0.5,
               vjust = -0.2,
@@ -72,11 +76,9 @@ output$pbarTOeuro <- renderPlot({
     
     # legend, footnote
     scale_fill_manual(name = "",
-                      values=c("#48686c"="#48686c", # EU sel
-                               "#f2c400"="#f2c400"),# EU exp
-                      # breaks e labels gestiscono ordine ed etichette                  
-                      breaks = c("#48686c","#f2c400"),
-                      labels=c("EU project selection (EUR bn)","EU expenditure declared (EUR bn)")) +
+                      values=c("EU project selection"="#48686c", # EU sel
+                               "EU expenditure declared"="#f2c400")# EU exp
+    ) +
     
     
     theme_classic() +
@@ -88,12 +90,7 @@ output$pbarTOeuro <- renderPlot({
     
     coord_cartesian(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
     
-    theme(legend.position = "bottom",
-          legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left
-          legend.box.background = element_rect(colour = "white"),
-          legend.direction = "horizontal",
-          legend.title = element_blank(),
-          legend.text=element_text(size=10),
+    theme(
           axis.title.x=element_blank(),
           axis.title.y=element_blank(),
           axis.text.x = element_text(hjust = 0.5, size = 10),
@@ -102,7 +99,18 @@ output$pbarTOeuro <- renderPlot({
           panel.grid.major.x = element_blank(),
           panel.grid.major.y = element_line(size = 0.5, colour = 'lightgrey'),
           plot.title = element_text(face="bold"),
-          plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm"))
+          plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")),
+  
+      tooltip=c("label2", "y")
+      ) %>%
+        layout(
+          showlegend = T,
+          legend = list(
+            orientation = "v", 
+            x = 1, 
+            y = 0.2
+          )
+        )
   
   
 })

@@ -31,7 +31,7 @@ shinyUI(
         
         tags$div(class = "footer",
                  tags$p("Developed by:", tags$a(href = "https://www.linkedin.com/in/roberto-palloni-6b224031/", "Roberto Palloni")),
-                 tags$p("GitHub:", tags$a(href = "https://github.com/rpalloni/CohesionDataVisualization", "rpalloni"))))
+                 tags$p("GitHub:", tags$a(href = "https://github.com/rpalloni/ESIFy", "rpalloni"))))
 )
 
 

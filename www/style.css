@@ -6,17 +6,23 @@ body {
 
 
 .header {
-	color: #003399;
-	background-color: #bddfeb;
+  text-align: center;
+  font-size: 20px;
+	color: #EBC944;
+	background-color: #3C6478;
 	padding: 20px;
 	margin: 5px;
 }
 
 .text {
-	color: #f2c400;
-	background-color: #efefef;
+	color: #FFFFFF;
+	background-color: #1496BB;
 	padding: 20px;
 	margin: 5px;
+}
+
+.text a {
+  color: #093145;
 }
 
 

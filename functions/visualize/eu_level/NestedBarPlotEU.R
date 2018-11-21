@@ -1,4 +1,4 @@
-output$pbarEU <- renderPlot({
+output$pbarEU <- renderPlotly({
   
   setFund <- input$fundEUp
   
@@ -15,7 +15,7 @@ output$pbarEU <- renderPlot({
   
   
   dt <- data.frame(MSP,MSI[-1])
-  colnames(dt) <- c("Region", "PlannedOP", "SelectionOP", "ExpenditureOP")
+  colnames(dt) <- c("Geo", "PlannedOP", "SelectionOP", "ExpenditureOP")
   
   
   ## fare stesse procedure per valori MS e EU
@@ -24,7 +24,7 @@ output$pbarEU <- renderPlot({
   sEU <- dfI %>% filter(fund==setFund & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_cost, na.rm=T))
   eEU <- dfI %>% filter(fund==setFund & year==max(as.numeric(dfI$year))) %>% summarise(sum(total_eligible_expenditure, na.rm=T))
   
-  dt <- rbind(dt, data.frame("Region"="EU", "PlannedOP"= as.numeric(pEU),
+  dt <- rbind(dt, data.frame("Geo"="EU", "PlannedOP"= as.numeric(pEU),
                              "SelectionOP"= as.numeric(sEU), "ExpenditureOP"=as.numeric(eEU)))
   ##
   
@@ -32,11 +32,11 @@ output$pbarEU <- renderPlot({
   dt$valueSelection <- round((dt$SelectionOP/dt$PlannedOP)*100,1)
   dt$valueExpenditure <- round((dt$ExpenditureOP/dt$PlannedOP)*100,1)
   
-  dt$level <- ifelse(dt$Region =="EU", "EU","MS")
+  dt$level <- ifelse(dt$Geo =="EU", "EU","MS")
   
-  dt$ColSel <- ifelse(dt$level == "MS", "#42beb8", "#48686c")
+  dt$ColSel <- ifelse(dt$level == "MS", "MS project selection", "EU project selection")
   
-  dt$ColExp <- ifelse(dt$level == "MS", "#ed7d31", "#f2c400")
+  dt$ColExp <- ifelse(dt$level == "MS", "MS expenditure declared", "EU expenditure declared")
   
   
   # riordinare i valori per avere il matching corretto
@@ -44,19 +44,21 @@ output$pbarEU <- renderPlot({
   dt$index <- seq(1:nrow(dt))
   
   ## plot function
-  
+  ggplotly(
   ggplot() +
     
     # selection
     geom_bar(data = dt,
-             aes(x=reorder(Region, index),
+             aes(x=reorder(Geo, index),
                  y=valueSelection, 
-                 fill = ColSel),
+                 fill = ColSel,
+                 label2 = Geo),
              position = position_dodge(width=0.9), stat="identity", width=0.8) +
     geom_text(data = dt,
               aes(label=paste0(valueSelection,"%"),
+                  label2 = Geo,
                   y=valueSelection,
-                  x=Region),
+                  x=Geo),
               size=3,
               hjust = 0.5,
               vjust = -0.5,
@@ -64,14 +66,16 @@ output$pbarEU <- renderPlot({
     
     # expenditure
     geom_bar(data = dt,
-             aes(x=reorder(Region, index),
+             aes(x=reorder(Geo, index),
                  y=valueExpenditure, 
-                 fill = ColExp),
+                 fill = ColExp,
+                 label2 = Geo),
              position = position_dodge(width=0.9), stat="identity", width=0.4) +
     geom_text(data = dt,
               aes(label=paste0(valueExpenditure,"%"),
+                  label2 = Geo,
                   y=valueExpenditure,
-                  x=Region),
+                  x=Geo),
               size=3,
               hjust = 0.5,
               vjust = -0.5,
@@ -79,15 +83,11 @@ output$pbarEU <- renderPlot({
     
     # legend, footnote
     scale_fill_manual(name = "",
-                      values=c("#42beb8"="#42beb8", # MS sel
-                               "#ed7d31"="#ed7d31", # MS exp
-                               "#48686c"="#48686c", # EU sel
-                               "#f2c400"="#f2c400"),# EU exp
-                      # breaks e labels gestiscono ordine ed etichette                  
-                      breaks = c("#42beb8","#ed7d31",
-                                 "#48686c", "#f2c400"),
-                      labels=c("MS rate of project selection","MS rate of expenditure declared",
-                               "EU rate of project selection","EU rate of expenditure declared")) +
+                      values=c("MS project selection"="#42beb8", # MS sel
+                               "MS expenditure declared"="#ed7d31", # MS exp
+                               "EU project selection"="#48686c", # EU sel
+                               "EU expenditure declared"="#f2c400")# EU exp
+    ) +
     
     
     theme_classic() +
@@ -99,13 +99,7 @@ output$pbarEU <- renderPlot({
     
     coord_cartesian(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
     
-    theme(legend.position = "bottom",
-          legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left
-          legend.box.background = element_rect(colour = "white"),
-          legend.direction = "horizontal",
-          legend.title = element_blank(),
-          legend.text=element_text(size=10),
-          axis.title.x=element_blank(),
+    theme(axis.title.x=element_blank(),
           axis.title.y=element_blank(),
           axis.text.x = element_text(hjust = 0.5, vjust=0.4, size = 12),
           axis.text.y = element_text(size = 10),
@@ -113,6 +107,18 @@ output$pbarEU <- renderPlot({
           panel.grid.major.x = element_blank(),
           panel.grid.major.y = element_line(size = 0.5, colour = 'lightgrey'),
           plot.title = element_text(face="bold"),
-          plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm"))
+          plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")),
+  
+        tooltip=c("label2", "y")
+      ) %>%
+        layout(
+          showlegend = T,
+          legend = list(
+            orientation = "v", 
+            x = 1, 
+            y = 0.2
+          )
+        )
+
 
 })
