@@ -14,7 +14,7 @@ MSpanel <-
     ##################################################################
     absolutePanel(id = "menuMSp", fixed = TRUE, draggable = TRUE, class = "menu",
                   top = 60, right = 30, bottom = "auto", left = "auto",
-                  width = 330, height = "auto",
+                  width = 280, height = "auto",
       
       # Dropdown menu for selection of variable for y-axis
       selectInput(inputId = "msMSp", # id used to refer to input field
@@ -67,9 +67,9 @@ MSpanel <-
     mainPanel(
       tags$div(class = "plot",
                tags$p("Rate of project selection and expenditure declared of MS Operational Programmes (% of planned financing)"),
-               withSpinner(plotOutput(outputId = "pbarMS",  width = "auto"))),
+               withSpinner(plotlyOutput(outputId = "pbarMS",  width = "auto"))),
       tags$div(class = "plot",
                tags$p("Rate of project selection and expenditure declared by TO (% of planned financing)"),
-               withSpinner(plotOutput(outputId = "pbarTOms",  width = "auto")))
+               withSpinner(plotlyOutput(outputId = "pbarTOms",  width = "auto")))
   )
 )

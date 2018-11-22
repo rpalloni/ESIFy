@@ -1,18 +1,17 @@
 library(RSocrata)
+library(tidyverse)
 library(shiny)
-library(ggplot2)
 library(plotly) # ggplotly()
 library(gridExtra)
-library(stringr)
 library(scales)
-# library(plyr) # join
-library(dplyr)
-library(DT) # dataTableOutput
+library(DT) # dataTableOutput()
 library(shinycssloaders) # add spinner when output is loading
 
 #########################################################
 ################## Load Data from API ###################
 #########################################################
+
+######## Financial ########
 
 # # https://cohesiondata.ec.europa.eu/dataset/ESIF-2014-2020-FINANCES-PLANNED-DETAILS/e4v6-qrrq
 urlPlanned <- "https://cohesiondata.ec.europa.eu/resource/rde7-u3r9.json"
@@ -75,5 +74,3 @@ update <- substr(readLines(urlMetadata)[8],22,31)
 
 urlMetadata <- "http://cohesiondata.ec.europa.eu/api/views/metadata/v1/2q3n-nr7n"
 update_ind <- substr(readLines(urlMetadata)[8],22,31)
-
-###

@@ -13,7 +13,7 @@ OPpanel <-
     ##################################################################
     absolutePanel(id = "menuOPp", fixed = TRUE, draggable = TRUE, class = "menu",
                  top = 60, right = 30, bottom = "auto", left = "auto",
-                 width = 330, height = "auto",
+                 width = 280, height = "auto",
       
       # Dropdown menu for selection of variable for y-axis
       selectInput(inputId = "msOPp", # id used to refer to input field
