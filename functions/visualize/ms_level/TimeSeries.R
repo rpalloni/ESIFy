@@ -32,7 +32,7 @@ output$pTSlineMS <- renderPlotly({
   colnames(dtMS) <- c("Geo","Year", "Selection", "Expenditure", "Planned")
   dtEU <- cbind('EU',EUI, EUP)
   colnames(dtEU) <- c("Geo","Year", "Selection", "Expenditure", "Planned")
-  dt <- rbind(dtOP, dtMS, dtEU)
+  dt <- rbind(dtMS, dtEU)
   
   
   dt$valueSelection <- rnd(dt$Selection/dt$Planned)
@@ -58,9 +58,9 @@ output$pTSlineMS <- renderPlotly({
                       linetype = Geo),
                   size=1.2) +
         
-        scale_color_manual(values=c("#ADD8E6", "orange", "#3C6478")) +
-        scale_linetype_manual(values=c("solid", "dashed", "dotted"))+ # http://www.cookbook-r.com/Graphs/Shapes_and_line_types/
-        scale_shape_manual(values=c(15,16,17)) + 
+        scale_color_manual(values=c( "orange", "#3C6478")) +
+        scale_linetype_manual(values=c("dashed", "dotted"))+ # http://www.cookbook-r.com/Graphs/Shapes_and_line_types/
+        scale_shape_manual(values=c(16,17)) + 
         
         theme_classic() +
         

@@ -72,7 +72,7 @@ MSpanel <-
                tags$p("Rate of project selection and expenditure declared by TO (% of planned financing)"),
                withSpinner(plotlyOutput(outputId = "pbarTOms",  width = "auto"))),
       tags$div(class = "plot",
-               tags$p("Rate of project selection and expenditure declared by TO (% of planned financing)"),
+               tags$p("Time series rate of project selection and expenditure declared(% of planned financing)"),
                withSpinner(plotlyOutput(outputId = "pTSlineMS",  width = "auto", height = '600')))
   )
 )
