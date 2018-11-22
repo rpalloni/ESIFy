@@ -67,15 +67,21 @@ OPpanel <-
         tags$br()
         ),
       tags$div(class = "plot",
+               tags$p("Rate of project selection and expenditure declared by Thematic Objective (% of planned financing)"),
+               withSpinner(plotlyOutput(outputId = "pbarTO",  width = "auto")),
+               tags$br()
+      ),
+      tags$div(class = "plot",
+               tags$p("Time series of rate of project selection and expenditure declared (% of planned financing)"),
+               withSpinner(plotlyOutput(outputId = "pTSlineOP",  width = "auto", height = '600')),
+               tags$br()
+      ),
+      tags$div(class = "plot",
         tags$p("Rate of project selection and expenditure declared over time: OP (left) and PA (right) details (% of planned financing)"),
         withSpinner(plotOutput(outputId = "pbarTS",  width = "auto")),
         tags$br()
         ),
-      tags$div(class = "plot",
-        tags$p("Rate of project selection and expenditure declared by Thematic Objective (% of planned financing)"),
-        withSpinner(plotlyOutput(outputId = "pbarTO",  width = "auto")),
-        tags$br()
-        ),
+      
       dataTableOutput(outputId = "tData",  width = "auto")
     )
   )

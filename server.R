@@ -23,8 +23,9 @@ shinyServer(
       })
       
       source('functions/visualize/op_level/NestedBarPlotPA.R', local = T)
-      source('functions/visualize/op_level/NestedBarPlotTS.R', local = T)
       source('functions/visualize/op_level/NestedBarPlotTO.R', local = T)
+      source('functions/visualize/op_level/TimeSeries.R', local = T)
+      source('functions/visualize/op_level/NestedBarPlotTS.R', local = T)
       source('functions/visualize/op_level/TableData.R', local = T)
       
   ################################## MS level ##########################################   
@@ -34,6 +35,7 @@ shinyServer(
       
       source('functions/visualize/ms_level/NestedBarPlotMS.R', local = T)
       source('functions/visualize/ms_level/NestedBarPlotTO.R', local = T)
+      source('functions/visualize/ms_level/TimeSeries.R', local = T)
       
   ################################## EU level ########################################## 
       

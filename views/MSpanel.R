@@ -70,6 +70,9 @@ MSpanel <-
                withSpinner(plotlyOutput(outputId = "pbarMS",  width = "auto"))),
       tags$div(class = "plot",
                tags$p("Rate of project selection and expenditure declared by TO (% of planned financing)"),
-               withSpinner(plotlyOutput(outputId = "pbarTOms",  width = "auto")))
+               withSpinner(plotlyOutput(outputId = "pbarTOms",  width = "auto"))),
+      tags$div(class = "plot",
+               tags$p("Rate of project selection and expenditure declared by TO (% of planned financing)"),
+               withSpinner(plotlyOutput(outputId = "pTSlineMS",  width = "auto", height = '600')))
   )
 )

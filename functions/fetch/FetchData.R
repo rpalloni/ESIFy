@@ -7,6 +7,12 @@ library(scales)
 library(DT) # dataTableOutput()
 library(shinycssloaders) # add spinner when output is loading
 
+# rounding
+rnd <- function(value){
+  res = round(value,2)
+  return(res)
+}
+
 #########################################################
 ################## Load Data from API ###################
 #########################################################

@@ -15,7 +15,7 @@ info <-
       ),
       tags$div(class = "row justify-content-center",
         tags$div(class = "col-6 text",
-                 tags$p("The objective of dashboard is to allow wider and deeper analysis of ESIF open data as available in the ESIF opendata portal."),
+                 tags$p("The objective of this dashboard is to allow wider and deeper analysis of ESIF open data as available in the ESIF opendata portal."),
                  tags$a(href = "https://cohesiondata.ec.europa.eu/", "ESIF Open Data")
         )
       )

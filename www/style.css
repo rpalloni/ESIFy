@@ -42,6 +42,12 @@ body {
 }
 
 
+.svg-container {
+  position: relative;
+  width: 1000px;
+  height: 400px;
+}
+
 .plot p {
   font-weight: bold;
   color: #808080;
