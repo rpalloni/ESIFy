@@ -6,6 +6,7 @@ library(gridExtra)
 library(scales)
 library(DT) # dataTableOutput()
 library(shinycssloaders) # add spinner when output is loading
+library(forecast) # predict()
 
 # rounding
 rnd <- function(value){

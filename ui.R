@@ -1,6 +1,9 @@
 # call the libraries and the data
 source('functions/fetch/FetchData.R', local = F)
 
+# timeseries prediction: line and ribbon
+source('functions/utils/utilsPrediction.R')
+
 #################################################################################
 ################################### front-end ###################################
 #################################################################################

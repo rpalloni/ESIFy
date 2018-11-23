@@ -1,7 +1,7 @@
 output$pTSlineMS <- renderPlotly({
   
-  setMS <- input$msOPp
-  setFund <- input$fundOPp
+  setMS <- input$msMSp
+  setFund <- input$fundMSp
   
   # EU
   
@@ -28,21 +28,30 @@ output$pTSlineMS <- renderPlotly({
     summarise(sum(total_amount))
 
   
-  dtMS <- cbind('MS',MSI, MSP)
+  # current values
+  dtMS <- cbind(setMS,MSI, MSP)
   colnames(dtMS) <- c("Geo","Year", "Selection", "Expenditure", "Planned")
+  
   dtEU <- cbind('EU',EUI, EUP)
   colnames(dtEU) <- c("Geo","Year", "Selection", "Expenditure", "Planned")
-  dt <- rbind(dtMS, dtEU)
   
+  dt <- rbind(dtMS, dtEU)
   
   dt$valueSelection <- rnd(dt$Selection/dt$Planned)
   dt$valueExpenditure <- rnd(dt$Expenditure/dt$Planned)
+  yr <- as.numeric(max(dt$Year))
+  
+  # future values
+  dfs <- utilsPred(setMS, 'Selection', dt, yr)
+  dfe <- utilsPred(setMS, 'Expenditure', dt, yr)
+  
   
   ## plot function
+  
+  # selection
   sel <- 
     ggplotly(
-      ggplot() +
-        # selection
+      ggplot() + 
         geom_point(data = dt,
                    aes(x=Year,
                        y=valueSelection,
@@ -57,6 +66,18 @@ output$pTSlineMS <- renderPlotly({
                       color = Geo,
                       linetype = Geo),
                   size=1.2) +
+        geom_line(data = dfs,
+                  aes(x=Year,
+                      y=valueEstimate,
+                      group = Geo,
+                      color = Geo),
+                  size=1) +
+        geom_ribbon(data = dfs,
+                   aes(x=Year, 
+                       ymin = valueLower, 
+                       ymax = valueUpper, 
+                       group = Geo,
+                       color = Geo), alpha = .25) +
         
         scale_color_manual(values=c( "orange", "#3C6478")) +
         scale_linetype_manual(values=c("dashed", "dotted"))+ # http://www.cookbook-r.com/Graphs/Shapes_and_line_types/
@@ -76,20 +97,12 @@ output$pTSlineMS <- renderPlotly({
         ),
       
       tooltip=c("y")
-    ) %>%
-    layout(
-      showlegend = T,
-      legend = list(
-        orientation = "h", 
-        x = 0.3, 
-        y = -0.1
-      )
-    )
+    ) 
   
+  # expenditure
   exp <- 
     ggplotly(
       ggplot() +
-        # expenditure
         geom_point(data = dt,
                    aes(x=Year,
                        y=valueExpenditure,
@@ -104,8 +117,20 @@ output$pTSlineMS <- renderPlotly({
                       color = Geo,
                       linetype = Geo),
                   size=1.2) +
+        geom_line(data = dfe,
+                  aes(x=Year,
+                      y=valueEstimate,
+                      group = Geo,
+                      color = Geo),
+                  size=1) +
+        geom_ribbon(data = dfe,
+                    aes(x=Year, 
+                        ymin = valueLower, 
+                        ymax = valueUpper, 
+                        group = Geo,
+                        color = Geo), alpha = .25) +
         
-        scale_color_manual(values=c("orange", "#3C6478")) +
+        scale_color_manual(values=c( "orange", "#3C6478")) +
         scale_linetype_manual(values=c("dashed", "dotted"))+ # http://www.cookbook-r.com/Graphs/Shapes_and_line_types/
         scale_shape_manual(values=c(16,17)) + 
         
@@ -126,10 +151,24 @@ output$pTSlineMS <- renderPlotly({
       tooltip=c("y")
     ) %>%
     layout(
+      annotations = list(
+        list(x = 0.5,
+             y = 2.2,
+             text = 'Rate of selection (% of planned)',
+             showarrow = F,
+             xref='paper',
+             yref='paper'),
+        list(x = 0.5,
+             y = 0.8,
+             text = 'Rate of expenditure (% of planned)',
+             showarrow = F,
+             xref='paper',
+             yref='paper')
+      ),
       showlegend = T,
       legend = list(
-        orientation = "h", 
-        x = 0.3, 
+        orientation = "h",
+        x = 0.3,
         y = -0.1
       )
     )
