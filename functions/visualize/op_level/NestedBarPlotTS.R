@@ -23,8 +23,8 @@ output$pbarTS <- renderPlot({
         
       
         
-        dtPA$valueSelection <- round((dtPA$SelectionPAx/dtPA$PlannedPAx)*100,1)
-        dtPA$valueExpenditure <- round((dtPA$ExpenditurePAx/dtPA$PlannedPAx)*100,1)
+        dtPA$valueSelection <- rnd(dtPA$SelectionPAx/dtPA$PlannedPAx)
+        dtPA$valueExpenditure <- rnd(dtPA$ExpenditurePAx/dtPA$PlannedPAx)
         
         dtPA$ColSel <- ifelse(dtPA$year == "2015", "#65c3ba",
                             ifelse(dtPA$year == "2016", "#54b2a9",
@@ -46,8 +46,8 @@ output$pbarTS <- renderPlot({
         dtOP <- data.frame("OPname"="OP", "PAcode"="OP","PlannedPAx"= as.numeric(pOP),iOP)
         
         
-        dtOP$valueSelection <- round((dtOP$SelectionPAx/dtOP$PlannedPAx)*100,1)
-        dtOP$valueExpenditure <- round((dtOP$ExpenditurePAx/dtOP$PlannedPAx)*100,1)
+        dtOP$valueSelection <- rnd(dtOP$SelectionPAx/dtOP$PlannedPAx)
+        dtOP$valueExpenditure <- rnd(dtOP$ExpenditurePAx/dtOP$PlannedPAx)
         
         dtOP$ColSel <- ifelse(dtOP$year == "2015", "#65c3ba",
                             ifelse(dtOP$year == "2016", "#54b2a9",
@@ -84,7 +84,7 @@ output$pbarTS <- renderPlot({
                        group = year_order),
                    position = position_dodge(width=0.9), stat="identity", width=0.8) +
           geom_text(data = dtPA,
-                    aes(label=paste0(valueSelection,"%"),
+                    aes(label=paste0(valueSelection*100,"%"),
                         y=valueSelection,
                         x=PAcode,
                         group = year_order),
@@ -101,7 +101,7 @@ output$pbarTS <- renderPlot({
                        group = year_order),
                    position = position_dodge(width=0.9), stat="identity", width=0.4) +
           geom_text(data = dtPA,
-                    aes(label=paste0(valueExpenditure,"%"),
+                    aes(label=paste0(valueExpenditure*100,"%"),
                         y=valueExpenditure,
                         x=PAcode,
                         group = year_order),
@@ -139,21 +139,16 @@ output$pbarTS <- renderPlot({
                                      "MS rate of project selection","MS rate of expenditure declared",
                                      "EU rate of project selection","EU rate of expenditure declared")) +
           
-          
-
-          
-          
           theme_classic() +
-          coord_flip(ylim = c(-4, max(dtPA$valueSelection)),
-                     xlim = c(0.5, length(unique(dtPA$PAcode))+0.4),
-                     expand = F) +
-          scale_y_continuous(expand = c(0, 0),
-                             breaks = seq(0, max(dtPA$valueSelection, na.rm=T), by=10),
-                             labels =  paste0(seq(0, max(dtPA$valueSelection, na.rm=T),by=10),"%")) +
           
-          coord_flip(ylim = c(-4,max(dtPA$valueSelection, na.rm=T)+max(dtPA$valueSelection, na.rm=T)*0.1), expand = T) +
+          scale_y_continuous(expand = c(0,0), labels = percent_format()) +
           
-          annotate(geom = "text", x = yl , y = -2, label = rev(dtPA$year), size = 3) +
+          expand_limits(y = max(dt$valueSelection, na.rm=T)*1.1) +
+          
+          # -0.02 and -0.04 are x-scale dependent
+          coord_flip(ylim = c(-0.04,max(dtPA$valueSelection, na.rm=T)*1.1), expand = F) +
+          annotate(geom = "text", x = yl , y = -0.02, label = rev(dtPA$year), size = 3) +
+          
           theme(legend.position = "none",
                 legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left
                 legend.box.background = element_rect(colour = "white"),
@@ -182,7 +177,7 @@ output$pbarTS <- renderPlot({
                        fill = ColSel),
                    position = position_dodge(width=0.9), stat="identity", width=0.8) +
           geom_text(data = dtOP,
-                    aes(label=paste0(valueSelection,"%"),
+                    aes(label=paste0(valueSelection*100,"%"),
                         y=valueSelection,
                         x=year),
                     size=3,
@@ -197,7 +192,7 @@ output$pbarTS <- renderPlot({
                        fill = ColExp),
                    position = position_dodge(width=0.9), stat="identity", width=0.4) +
           geom_text(data = dtOP,
-                    aes(label=paste0(valueExpenditure,"%"),
+                    aes(label=paste0(valueExpenditure*100,"%"),
                         y=valueExpenditure,
                         x=year),
                     size=3,
@@ -235,16 +230,16 @@ output$pbarTS <- renderPlot({
                                      "EU rate of project selection","EU rate of expenditure declared")) +
           
           
-          
-          
-          
           theme_classic() +
           
-          scale_y_continuous(expand = c(0, 0),
-                             breaks = seq(0, max(dtOP$valueSelection, na.rm=T), by=10),
-                             labels =  paste0(seq(0, max(dtOP$valueSelection, na.rm=T),by=10),"%")) +
           
-          # coord_cartesian(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
+          coord_cartesian() +
+          
+          
+          scale_y_continuous(expand = c(0,0), labels = percent_format()) +
+          
+          expand_limits(y = max(dtOP$valueSelection, na.rm=T)*1.1) +
+
 
           theme(legend.position = "none",
                 legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left

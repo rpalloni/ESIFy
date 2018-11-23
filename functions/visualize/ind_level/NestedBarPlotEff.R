@@ -1,8 +1,8 @@
 output$pbarEUeff <- renderPlot({
   
-  setFund <- input$fundInd
-  setInd <- input$codeInd
-  setTO <- input$ToInd
+  setFund <- input$fundInd # 'ERDF'
+  setInd <- input$codeInd # 'CO01'
+  setTO <- input$ToInd # '01'
   
   
   setYear <- dfR %>% filter(year==max(as.numeric(dfR$year))) %>% distinct(year) %>%as.character()
@@ -126,14 +126,19 @@ output$pbarEUeff <- renderPlot({
       
       labs(caption="*Ratios calculated only for MSs adopting the indicator and with value >0")+
       
-      theme_classic() +
       
       scale_x_discrete(labels = function(x) str_wrap(x, width = 15)) +
-      scale_y_continuous(expand = c(0, 0),
-                         breaks = seq(0, max(dt$valueSelection, na.rm=T), by=10),
-                         labels =  paste0(seq(0, max(dt$valueSelection, na.rm=T),by=10))) +
       
-      coord_cartesian(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
+      theme_classic() +
+      
+      
+      coord_cartesian() +
+      
+      
+      scale_y_continuous(expand = c(0,0)) +
+      
+      expand_limits(y = max(dt$valueSelection, na.rm=T)*1.1) +
+      
       
       theme(legend.position = "bottom",
             legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left

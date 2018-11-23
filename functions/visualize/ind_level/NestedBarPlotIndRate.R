@@ -61,7 +61,7 @@ output$pbarEUindRate <- renderPlot({
     #dt$valueSelection <- round((dt$Target),1)
     #dt$valueExpenditure <- round((dt$Indicator),1)
     
-    dt$rate <- round((dt$Indicator/dt$Target)*100,1)
+    dt$rate <- rnd(dt$Indicator/dt$Target)
     
     dt$level <- ifelse(dt$ms =="EU", "EU","MS")
     
@@ -78,35 +78,21 @@ output$pbarEUindRate <- renderPlot({
     
     ggplot() +
       
-      # selection
+      # ratio
       geom_bar(data = dt,
                aes(x=reorder(ms, index),
                    y=rate, 
                    fill = ColSel),
                position = position_dodge(width=0.9), stat="identity", width=0.8) +
       geom_text(data = dt,
-                aes(label=paste0(rate, "%"),
+                aes(label=paste0(rate*100, "%"),
                     y=rate,
                     x=ms),
                 size=3,
                 hjust = 0.5,
                 vjust = -0.5,
                 position = position_dodge(width = 1)) +
-      
-      # # expenditure
-      # geom_bar(data = dt,
-      #          aes(x=reorder(ms, index),
-      #              y=valueExpenditure, 
-      #              fill = ColExp),
-      #          position = position_dodge(width=0.9), stat="identity", width=0.4) +
-      # geom_text(data = dt,
-      #           aes(label=paste0(valueExpenditure),
-      #               y=valueExpenditure,
-      #               x=ms),
-      #           size=3,
-      #           hjust = 0.5,
-      #           vjust = -0.5,
-      #           position = position_dodge(width = 1)) +
+    
       
       # legend, footnote
       scale_fill_manual(name = "",
@@ -128,11 +114,12 @@ output$pbarEUindRate <- renderPlot({
       theme_classic() +
       
       scale_x_discrete(labels = function(x) str_wrap(x, width = 15)) +
-      scale_y_continuous(expand = c(0, 0),
-                         breaks = seq(0, max(dt$rate, na.rm=T), by=10),
-                         labels =  paste0(seq(0, max(dt$rate, na.rm=T),by=10),"%")) +
+      coord_cartesian() +
       
-      coord_cartesian(ylim = c(0,max(dt$rate, na.rm=T)+max(dt$rate, na.rm=T)*0.1), expand = T) +
+      
+      scale_y_continuous(expand = c(0,0), labels = percent_format()) +
+      
+      expand_limits(y = max(dt$rate, na.rm=T)*1.1) +
       
       theme(legend.position = "bottom",
             legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left

@@ -41,8 +41,8 @@ output$pbarPA <- renderPlotly({
                                        "SelectionPAx"= as.numeric(sEU), "ExpenditurePAx"=as.numeric(eEU)))
             
             ## rates calculation and set of colours
-            dt$valueSelection <- round((dt$SelectionPAx/dt$PlannedPAx)*100,1)
-            dt$valueExpenditure <- round((dt$ExpenditurePAx/dt$PlannedPAx)*100,1)
+            dt$valueSelection <- rnd(dt$SelectionPAx/dt$PlannedPAx)
+            dt$valueExpenditure <- rnd(dt$ExpenditurePAx/dt$PlannedPAx)
             
             dt$level <- ifelse(dt$Geo == "OP", "OP",
                                ifelse(dt$Geo == setMS, "MS",
@@ -73,7 +73,7 @@ output$pbarPA <- renderPlotly({
                            label2 = Geo),
                        position = position_dodge(width=0.9), stat="identity", width=0.8) +
               geom_text(data = dt,
-                        aes(label=paste0(valueSelection,"%"),
+                        aes(label=paste0(valueSelection*100,"%"),
                             label2 = Geo,
                             y=valueSelection,
                             x=PAcode),
@@ -90,7 +90,7 @@ output$pbarPA <- renderPlotly({
                            label2 = Geo),
                        position = position_dodge(width=0.9), stat="identity", width=0.4) +
               geom_text(data = dt,
-                        aes(label=paste0(valueExpenditure,"%"),
+                        aes(label=paste0(valueExpenditure*100,"%"),
                             label2 = Geo,
                             y=valueExpenditure,
                             x=PAcode),
@@ -111,12 +111,10 @@ output$pbarPA <- renderPlotly({
               
               theme_classic() +
               
-              #scale_x_discrete(labels = function(x) str_wrap(x, width = 35)) +
-              scale_y_continuous(expand = c(0, 0),
-                                 breaks = seq(0, max(dt$valueSelection, na.rm=T), by=10),
-                                 labels =  paste0(seq(0, max(dt$valueSelection, na.rm=T),by=10),"%")) +
+              coord_flip(ylim = c(0,max(dt$valueSelection, na.rm=T)*1.1), expand = T) +
               
-              coord_flip(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
+
+              scale_y_continuous(expand = c(0,0), labels = percent_format()) +
               
               theme(
                     axis.title.x=element_blank(),

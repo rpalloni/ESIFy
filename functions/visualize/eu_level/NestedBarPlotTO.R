@@ -16,8 +16,8 @@ output$pbarTOeu <- renderPlotly({
   
   
   ## rates calculation and set of colours
-  dt$valueSelection <- round((dt$SelectionTO/dt$PlannedTO)*100,1)
-  dt$valueExpenditure <- round((dt$ExpenditureTO/dt$PlannedTO)*100,1)
+  dt$valueSelection <- rnd(dt$SelectionTO/dt$PlannedTO)
+  dt$valueExpenditure <- rnd(dt$ExpenditureTO/dt$PlannedTO)
   
   
   dt$ColSel <- "EU project selection"
@@ -43,7 +43,7 @@ output$pbarTOeu <- renderPlotly({
              position = position_dodge(width = 0.9),
              stat="identity", width=0.8) +
     geom_text(data = dt,
-              aes(label=paste0(valueSelection,"%"),
+              aes(label=paste0(valueSelection*100,"%"),
                   y=valueSelection,
                   x=TOcode,
                   group = Geo,
@@ -63,7 +63,7 @@ output$pbarTOeu <- renderPlotly({
              position = position_dodge(width = 0.9),
              stat="identity", width=0.4) +
     geom_text(data = dt,
-              aes(label=paste0(valueExpenditure,"%"),
+              aes(label=paste0(valueExpenditure*100,"%"),
                   y=valueExpenditure,
                   x=TOcode,
                   group = Geo,
@@ -82,11 +82,13 @@ output$pbarTOeu <- renderPlotly({
     
     theme_classic() +
     
-    scale_y_continuous(expand = c(0, 0),
-                       breaks = seq(0, max(dt$valueSelection, na.rm=T), by=10),
-                       labels =  paste0(seq(0, max(dt$valueSelection, na.rm=T),by=10),"%")) +
     
-    coord_cartesian(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
+    coord_cartesian() +
+    
+    
+    scale_y_continuous(expand = c(0,0), labels = percent_format()) +
+    
+    expand_limits(y = max(dt$valueSelection, na.rm=T)*1.1) +
     
     theme(axis.title.x=element_blank(),
           axis.title.y=element_blank(),

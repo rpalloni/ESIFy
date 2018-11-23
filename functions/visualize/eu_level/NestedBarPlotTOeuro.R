@@ -83,12 +83,14 @@ output$pbarTOeuro <- renderPlotly({
     
     theme_classic() +
     
-    #scale_x_discrete(labels = function(x) str_wrap(x, width = 35)) +
-    scale_y_continuous(expand = c(0, 0),
-                       breaks = seq(0, max(dt$valueSelection, na.rm=T), by=10),
-                       labels =  paste0(seq(0, max(dt$valueSelection, na.rm=T),by=10))) +
     
-    coord_cartesian(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
+    coord_cartesian() +
+    
+    
+    
+    scale_y_continuous(expand = c(0,0), labels=dollar_format(prefix = '', suffix = " Bn")) +
+    
+    expand_limits(y = max(dt$valueSelection, na.rm=T)*1.1) +
     
     theme(
           axis.title.x=element_blank(),

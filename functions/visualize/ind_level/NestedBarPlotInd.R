@@ -58,8 +58,8 @@ output$pbarEUind <- renderPlot({
     
     
     ## rates calculation and set of colours
-    dt$valueSelection <- round((dt$Target),1)
-    dt$valueExpenditure <- round((dt$Indicator),1)
+    dt$valueSelection <- round(dt$Target/1000,0)
+    dt$valueExpenditure <- round(dt$Indicator/1000,0)
     
     dt$level <- ifelse(dt$ms =="EU", "EU","MS")
     
@@ -126,11 +126,13 @@ output$pbarEUind <- renderPlot({
       theme_classic() +
       
       scale_x_discrete(labels = function(x) str_wrap(x, width = 15)) +
-      scale_y_continuous(expand = c(0, 0),
-                         breaks = seq(0, max(dt$valueSelection, na.rm=T), by=5000),
-                         labels =  paste0(seq(0, max(dt$valueSelection, na.rm=T),by=5000))) +
       
-      coord_cartesian(ylim = c(0,max(dt$valueSelection, na.rm=T)+max(dt$valueSelection, na.rm=T)*0.1), expand = T) +
+      coord_cartesian() +
+      
+      
+      scale_y_continuous(expand = c(0,0), labels=dollar_format(prefix = '', suffix = "K")) +
+      
+      expand_limits(y = max(dt$valueSelection, na.rm=T)*1.1) +
       
       theme(legend.position = "bottom",
             legend.box.margin = margin(0.5, 0.5, 0.5, 0.5), # top, right, bottom, left

@@ -91,15 +91,7 @@ output$pTSlineOP <- renderPlotly({
         ),
     
     tooltip=c("y")
-  ) %>%
-    layout(
-      showlegend = T,
-      legend = list(
-        orientation = "h", 
-        x = 0.3, 
-        y = -0.1
-      )
-    )
+  ) 
   
   exp <- 
     ggplotly(
