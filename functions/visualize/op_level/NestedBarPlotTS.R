@@ -1,8 +1,8 @@
 output$pbarTS <- renderPlot({
   
-  setMS <- input$msOPp
-  setFund <- input$fundOPp
-  setCCI <- input$titleOPp # Nordrhein-Westfalen - ERDF
+  setMS <- input$msOPp # 'DE'
+  setFund <- input$fundOPp # 'ERDF'
+  setCCI <- input$titleOPp # 'Nordrhein-Westfalen - ERDF'
   
           
         OPP <- dfP %>%
@@ -17,25 +17,31 @@ output$pbarTS <- renderPlot({
                     sum(total_eligible_expenditure, na.rm=T))
         
         # PA
-        OPname <- rep(setCCI, nrow(OPI))
-        dtPA <- data.frame(OPname,merge(OPP, OPI, by='priority', type='left', match='all'))
-        colnames(dtPA) <- c("OPname","PAcode", "PlannedPAx", "year","SelectionPAx", "ExpenditurePAx")
+        Geo <- rep(setCCI, nrow(OPI))
+        dtPA <- data.frame(Geo, merge(OPP, OPI, by='priority', type='left', match='all'))
+        colnames(dtPA) <- c("Geo","PAcode", "PlannedPAx", "year","SelectionPAx", "ExpenditurePAx")
         
       
         
         dtPA$valueSelection <- rnd(dtPA$SelectionPAx/dtPA$PlannedPAx)
         dtPA$valueExpenditure <- rnd(dtPA$ExpenditurePAx/dtPA$PlannedPAx)
         
-        dtPA$ColSel <- ifelse(dtPA$year == "2015", "#65c3ba",
-                            ifelse(dtPA$year == "2016", "#54b2a9",
-                                   ifelse(dtPA$year == "2017", "#35a79c",
-                                          ifelse(dtPA$year == "2018", "#009688","#83d0c9"))))
+        dtPA$ColSel <- case_when(
+          dtPA$year == "2015" ~ "#65c3ba",
+          dtPA$year == "2016" ~ "#54b2a9",
+          dtPA$year == "2017" ~ "#35a79c",
+          dtPA$year == "2018" ~ "#009688",
+          TRUE ~ "#83d0c9"
+        )
         
-        dtPA$ColExp <- ifelse(dtPA$year == "2015", "#dbac98",
-                            ifelse(dtPA$year == "2016", "#d29985",
-                                   ifelse(dtPA$year == "2017", "#c98276",
-                                          ifelse(dtPA$year == "2018", "#e35d6a","#eec1ad"))))
-        
+        dtPA$ColExp <- case_when(
+          dtPA$year == "2015" ~ "#dbac98",
+          dtPA$year == "2016" ~ "#d29985",
+          dtPA$year == "2017" ~ "#c98276",
+          dtPA$year == "2018" ~ "#e35d6a",
+          TRUE ~ "#eec1ad"
+        )
+
         # OP
         pOP <- dfP %>% filter(title==setCCI & fund==setFund) %>% summarise(sum(total_amount))
         iOP <- dfI %>% filter(title==setCCI & fund==setFund) %>% 
@@ -43,37 +49,48 @@ output$pbarTS <- renderPlot({
                                        sum(total_eligible_expenditure, na.rm=T))
         colnames(iOP) <- c("year", "SelectionPAx","ExpenditurePAx")
         
-        dtOP <- data.frame("OPname"="OP", "PAcode"="OP","PlannedPAx"= as.numeric(pOP),iOP)
+        dtOP <- data.frame("Geo"="OP", "PAcode"="OP","PlannedPAx"= as.numeric(pOP),iOP)
         
         
         dtOP$valueSelection <- rnd(dtOP$SelectionPAx/dtOP$PlannedPAx)
         dtOP$valueExpenditure <- rnd(dtOP$ExpenditurePAx/dtOP$PlannedPAx)
         
-        dtOP$ColSel <- ifelse(dtOP$year == "2015", "#65c3ba",
-                            ifelse(dtOP$year == "2016", "#54b2a9",
-                                   ifelse(dtOP$year == "2017", "#35a79c",
-                                          ifelse(dtOP$year == "2018", "#009688","#83d0c9"))))
+        dtOP$ColSel <- case_when(
+          dtOP$year == "2015" ~ "#65c3ba",
+          dtOP$year == "2016" ~ "#54b2a9",
+          dtOP$year == "2017" ~ "#35a79c",
+          dtOP$year == "2018" ~ "#009688",
+          TRUE ~ "#83d0c9"
+        )
         
-        dtOP$ColExp <- ifelse(dtOP$year == "2015", "#dbac98",
-                            ifelse(dtOP$year == "2016", "#d29985",
-                                   ifelse(dtOP$year == "2017", "#c98276",
-                                          ifelse(dtOP$year == "2018", "#e35d6a","#eec1ad"))))
-      
-        
+        dtOP$ColExp <- case_when(
+          dtOP$year == "2015" ~ "#dbac98",
+          dtOP$year == "2016" ~ "#d29985",
+          dtOP$year == "2017" ~ "#c98276",
+          dtOP$year == "2018" ~ "#e35d6a",
+          TRUE ~ "#eec1ad"
+        )
+          
+
         ## order of bars
+        dtPA$PAcode <- as.character(dtPA$PAcode)
+        dtPA$PAcode <- ifelse(is.na(dtPA$PAcode),"unspecified",dtPA$PAcode)
         dtPA <- dtPA[order(dtPA$PAcode, -rank(dtPA$year), decreasing = T), ]
         dtPA$index <- seq(1:nrow(dtPA))
         
         year_order <- factor(dtPA$year, levels = c('2018','2017','2016','2015','2014'), ordered=T)
         
         
-        ## plot function
+        # second level axis label
         
         year_label <- seq(0.65,length.out=nrow(dtPA), by=0.18)
         for (i in 1:length(year_label)){
           year_label[i+5] <- year_label[i] + 1
         }
         yl <- year_label[1:nrow(dtPA)]
+        
+        
+        ## priority axis right plot
         
         gPA <- ggplot() +
           # selection
@@ -143,10 +160,11 @@ output$pbarTS <- renderPlot({
           
           scale_y_continuous(expand = c(0,0), labels = percent_format()) +
           
-          expand_limits(y = max(dt$valueSelection, na.rm=T)*1.1) +
+          expand_limits(y = max(dtPA$valueSelection, na.rm=T)*1.1) +
           
           # -0.02 and -0.04 are x-scale dependent
           coord_flip(ylim = c(-0.04,max(dtPA$valueSelection, na.rm=T)*1.1), expand = F) +
+          
           annotate(geom = "text", x = yl , y = -0.02, label = rev(dtPA$year), size = 3) +
           
           theme(legend.position = "none",
@@ -168,7 +186,8 @@ output$pbarTS <- renderPlot({
                 plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm"))
         
         
-        ######################################################################################
+        ## operational programme left plot
+        
         gOP <- ggplot() +
           # selection
           geom_bar(data = dtOP,
@@ -260,6 +279,7 @@ output$pbarTS <- renderPlot({
                 plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm"))
         
         
+        # assemble plots 
         grid.arrange(gOP, gPA,ncol=2, widths = c(0.3, 0.7))
 
 })
