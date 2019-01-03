@@ -4,6 +4,21 @@ output$pbarTS <- renderPlot({
   setFund <- input$fundOPp # 'ERDF'
   setCCI <- input$titleOPp # 'Nordrhein-Westfalen - ERDF'
   
+  # color factory
+  cs14 = "#83d0c9"
+  cs15 = "#65c3ba"
+  cs16 = "#54b2a9"
+  cs17 = "#35a79c"
+  cs18 = "#009688"
+  cs19 = "#00786c"
+  
+  ce14 = "#eec1ad"
+  ce15 = "#dbac98"
+  ce16 = "#d29985"
+  ce17 = "#c98276"
+  ce18 = "#e35d6a"
+  ce19 = "#b54a54"
+  
           
         OPP <- dfP %>%
           filter(title==setCCI & fund==setFund) %>%
@@ -22,24 +37,25 @@ output$pbarTS <- renderPlot({
         colnames(dtPA) <- c("Geo","PAcode", "PlannedPAx", "year","SelectionPAx", "ExpenditurePAx")
         
       
-        
         dtPA$valueSelection <- rnd(dtPA$SelectionPAx/dtPA$PlannedPAx)
         dtPA$valueExpenditure <- rnd(dtPA$ExpenditurePAx/dtPA$PlannedPAx)
         
         dtPA$ColSel <- case_when(
-          dtPA$year == "2015" ~ "#65c3ba",
-          dtPA$year == "2016" ~ "#54b2a9",
-          dtPA$year == "2017" ~ "#35a79c",
-          dtPA$year == "2018" ~ "#009688",
-          TRUE ~ "#83d0c9"
+          dtPA$year == "2015" ~ "cs15",
+          dtPA$year == "2016" ~ "cs16",
+          dtPA$year == "2017" ~ "cs17",
+          dtPA$year == "2018" ~ "cs18",
+          dtPA$year == "2019" ~ "cs19",
+          TRUE ~ "cs14"
         )
         
         dtPA$ColExp <- case_when(
-          dtPA$year == "2015" ~ "#dbac98",
-          dtPA$year == "2016" ~ "#d29985",
-          dtPA$year == "2017" ~ "#c98276",
-          dtPA$year == "2018" ~ "#e35d6a",
-          TRUE ~ "#eec1ad"
+          dtPA$year == "2015" ~ "ce15",
+          dtPA$year == "2016" ~ "ce16",
+          dtPA$year == "2017" ~ "ce17",
+          dtPA$year == "2018" ~ "ce18",
+          dtPA$year == "2019" ~ "ce19",
+          TRUE ~ "ce14"
         )
 
         # OP
@@ -56,21 +72,25 @@ output$pbarTS <- renderPlot({
         dtOP$valueExpenditure <- rnd(dtOP$ExpenditurePAx/dtOP$PlannedPAx)
         
         dtOP$ColSel <- case_when(
-          dtOP$year == "2015" ~ "#65c3ba",
-          dtOP$year == "2016" ~ "#54b2a9",
-          dtOP$year == "2017" ~ "#35a79c",
-          dtOP$year == "2018" ~ "#009688",
-          TRUE ~ "#83d0c9"
+          dtOP$year == "2015" ~ "cs15",
+          dtOP$year == "2016" ~ "cs16",
+          dtOP$year == "2017" ~ "cs17",
+          dtOP$year == "2018" ~ "cs18",
+          dtOP$year == "2019" ~ "cs19",
+          TRUE ~ "cs14"
         )
         
         dtOP$ColExp <- case_when(
-          dtOP$year == "2015" ~ "#dbac98",
-          dtOP$year == "2016" ~ "#d29985",
-          dtOP$year == "2017" ~ "#c98276",
-          dtOP$year == "2018" ~ "#e35d6a",
-          TRUE ~ "#eec1ad"
+          dtOP$year == "2015" ~ "ce15",
+          dtOP$year == "2016" ~ "ce16",
+          dtOP$year == "2017" ~ "ce17",
+          dtOP$year == "2018" ~ "ce18",
+          dtOP$year == "2019" ~ "ce19",
+          TRUE ~ "ce14"
         )
-          
+        
+        
+        ## priority axis right plot
 
         ## order of bars
         dtPA$PAcode <- as.character(dtPA$PAcode)
@@ -78,19 +98,17 @@ output$pbarTS <- renderPlot({
         dtPA <- dtPA[order(dtPA$PAcode, -rank(dtPA$year), decreasing = T), ]
         dtPA$index <- seq(1:nrow(dtPA))
         
-        year_order <- factor(dtPA$year, levels = c('2018','2017','2016','2015','2014'), ordered=T)
+        year_order <- factor(dtPA$year, levels = c('2019','2018','2017','2016','2015','2014'), ordered=T)
         
         
         # second level axis label
         
-        year_label <- seq(0.65,length.out=nrow(dtPA), by=0.18)
+        year_label <- seq(0.65,length.out=nrow(dtPA), by=0.15)
         for (i in 1:length(year_label)){
-          year_label[i+5] <- year_label[i] + 1
+          year_label[i+6] <- year_label[i] + 1
         }
         yl <- year_label[1:nrow(dtPA)]
         
-        
-        ## priority axis right plot
         
         gPA <- ggplot() +
           # selection
@@ -127,33 +145,29 @@ output$pbarTS <- renderPlot({
                     vjust = 0.1,
                     position = position_dodge(width = 0.9)) +
           
-          # legend, footnote
+          # bars color, legend, labels
           scale_fill_manual(name = "",
-                            values=c("#83d0c9"="#83d0c9", # 2014 sel
-                                     "#65c3ba"="#65c3ba", # 2015 sel
-                                     "#54b2a9"="#54b2a9", # 2016 sel
-                                     "#35a79c"="#35a79c", # 2017 sel
-                                     "#009688"="#009688", # 2018 sel
-                                     "#eec1ad"="#eec1ad", # 2014 exp
-                                     "#dbac98"="#dbac98", # 2015 exp
-                                     "#d29985"="#d29985", # 2016 exp
-                                     "#c98276"="#c98276", # 2017 exp
-                                     "#e35d6a"="#e35d6a"), # 2018 exp
+                            values=c(cs14 = cs14, # dtPA$ColSel = factory color
+                                     cs15 = cs15,
+                                     cs16 = cs16,
+                                     cs17 = cs17,
+                                     cs18 = cs18,
+                                     cs19 = cs19,
+                                     
+                                     ce14 = ce14,
+                                     ce15 = ce15,
+                                     ce16 = ce16,
+                                     ce17 = ce17,
+                                     ce18 = ce18,
+                                     ce19 = ce19),
                             # breaks e labels gestiscono ordine ed etichette                  
-                            breaks = c("#83d0c9",
-                                       "#65c3ba",
-                                       "#54b2a9",
-                                       "#35a79c",
-                                       "#009688",
-                                       "#eec1ad",
-                                       "#dbac98",
-                                       "#d29985",
-                                       "#c98276",
-                                       "#e35d6a"),
+                            breaks = c(cs14,cs15,cs16,cs17,cs18,cs19,
+                                       ce14,ce15,ce16,ce17,ce18,ce19),
                             labels=c("EU rate of project selection","EU rate of expenditure declared",
                                      "MS rate of project selection","MS rate of expenditure declared",
                                      "EU rate of project selection","EU rate of expenditure declared",
                                      "MS rate of project selection","MS rate of expenditure declared",
+                                     "EU rate of project selection","EU rate of expenditure declared",
                                      "EU rate of project selection","EU rate of expenditure declared")) +
           
           theme_classic() +
@@ -221,31 +235,27 @@ output$pbarTS <- renderPlot({
           
           # legend, footnote
           scale_fill_manual(name = "",
-                            values=c("#83d0c9"="#83d0c9", # 2014 sel
-                                     "#65c3ba"="#65c3ba", # 2015 sel
-                                     "#54b2a9"="#54b2a9", # 2016 sel
-                                     "#35a79c"="#35a79c", # 2017 sel
-                                     "#009688"="#009688", # 2018 sel
-                                     "#eec1ad"="#eec1ad", # 2014 exp
-                                     "#dbac98"="#dbac98", # 2015 exp
-                                     "#d29985"="#d29985", # 2016 exp
-                                     "#c98276"="#c98276", # 2017 exp
-                                     "#e35d6a"="#e35d6a"), # 2018 exp
+                            values=c(cs14 = cs14, # dtPA$ColSel = factory color
+                                     cs15 = cs15,
+                                     cs16 = cs16,
+                                     cs17 = cs17,
+                                     cs18 = cs18,
+                                     cs19 = cs19,
+                                     
+                                     ce14 = ce14,
+                                     ce15 = ce15,
+                                     ce16 = ce16,
+                                     ce17 = ce17,
+                                     ce18 = ce18,
+                                     ce19 = ce19),
                             # breaks e labels gestiscono ordine ed etichette                  
-                            breaks = c("#83d0c9",
-                                       "#65c3ba",
-                                       "#54b2a9",
-                                       "#35a79c",
-                                       "#009688",
-                                       "#eec1ad",
-                                       "#dbac98",
-                                       "#d29985",
-                                       "#c98276",
-                                       "#e35d6a"),
+                            breaks = c(cs14,cs15,cs16,cs17,cs18,cs19,
+                                       ce14,ce15,ce16,ce17,ce18,ce19),
                             labels=c("EU rate of project selection","EU rate of expenditure declared",
                                      "MS rate of project selection","MS rate of expenditure declared",
                                      "EU rate of project selection","EU rate of expenditure declared",
                                      "MS rate of project selection","MS rate of expenditure declared",
+                                     "EU rate of project selection","EU rate of expenditure declared",
                                      "EU rate of project selection","EU rate of expenditure declared")) +
           
           
