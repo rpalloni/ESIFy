@@ -3,7 +3,7 @@ This repository contains file for developing data visualization of cohesion poli
 
 ![image](https://user-images.githubusercontent.com/17080117/121922482-4e46eb80-cd3a-11eb-9e6f-ac0f09176819.png)
 
-
+Webapp: eu-data.shinyapps.io/esify/
 
 Read more about the functioning of the app here: https://www.preprints.org/manuscript/201801.0066/v1
 
