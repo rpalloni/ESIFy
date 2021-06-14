@@ -1,6 +1,10 @@
 # ESIFy
 This repository contains file for developing data visualization of cohesion policy open data.
 
+![image](https://user-images.githubusercontent.com/17080117/121922482-4e46eb80-cd3a-11eb-9e6f-ac0f09176819.png)
+
+
+
 Read more about the functioning of the app here: https://www.preprints.org/manuscript/201801.0066/v1
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
